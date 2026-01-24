@@ -147,8 +147,8 @@ export function CVBuilder() {
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl rotate-3"><span className="text-4xl">📝</span></div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">CV Maker</h1>
-            <p className="text-gray-500">Create your professional CV in minutes</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">CVistan</h1>
+            <p className="text-gray-500">Build your dream CV in minutes 🚀</p>
           </div>
           <div className="bg-white rounded-3xl shadow-xl p-6">
             <h2 className="text-lg font-semibold text-center mb-4">Select Your Language</h2>
@@ -232,7 +232,7 @@ export function CVBuilder() {
                 <div className="bg-purple-50 rounded-xl p-3 border border-purple-100"><p className="text-purple-700 text-sm">{t('skillH')}</p></div>
                 <div className="flex gap-2"><input id="ski" placeholder={t('skillP')} className="flex-1 px-3 py-2 border rounded-xl" onKeyPress={(e:any) => { if (e.key === 'Enter' && e.target.value.trim()) { upd('skills', [...cv.skills, e.target.value.trim()]); e.target.value = ''; } }} /><button onClick={() => { const i = document.getElementById('ski') as HTMLInputElement; if (i.value.trim()) { upd('skills', [...cv.skills, i.value.trim()]); i.value = ''; } }} className="px-4 py-2 bg-blue-600 text-white rounded-xl">+</button></div>
                 {cv.skills.length > 0 && <div className={`flex flex-wrap gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>{cv.skills.map((s, i) => <span key={i} className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm flex items-center gap-1">{s}<button onClick={() => upd('skills', cv.skills.filter((_, j) => j !== i))} className="text-blue-500 font-bold">×</button></span>)}</div>}
-                <div><p className="text-sm text-gray-500 mb-2">{t('suggest')}</p><div className={`flex flex-wrap gap-1 ${rtl ? 'flex-row-reverse' : ''}`}>{['MS Office', 'Communication', 'Leadership', 'Problem Solving', 'Teamwork', 'Project Management'].filter(s => !cv.skills.includes(s)).map(s => <button key={s} onClick={() => upd('skills', [...cv.skills, s])} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs hover:bg-blue-100 hover:text-blue-700">+ {s}</button>)}</div></div>
+                <div><p className="text-sm text-gray-500 mb-2">{t('suggest')}</p><div className={`flex flex-wrap gap-1 ${rtl ? 'flex-row-reverse' : ''}`}>{((t('suggestedSkills') as string[]) || ['Microsoft Office', 'Communication', 'Leadership', 'Problem Solving', 'Teamwork', 'Project Management', 'Time Management', 'Critical Thinking', 'Customer Service', 'Data Analysis', 'Public Speaking', 'Negotiation', 'Adaptability', 'Creativity', 'Attention to Detail', 'Organization', 'Decision Making', 'Research', 'Writing', 'Strategic Planning']).filter(s => !cv.skills.includes(s)).slice(0, 12).map(s => => <button key={s} onClick={() => upd('skills', [...cv.skills, s])} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs hover:bg-blue-100 hover:text-blue-700">+ {s}</button>)}</div></div>
               </div>}
               {/* Step 6: Languages */}
               {step === 6 && <div className="space-y-3">
