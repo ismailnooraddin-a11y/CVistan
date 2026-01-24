@@ -1,11 +1,57 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CVistan</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CVistan — CV Builder for Kurdistan</title>
+    <meta
+      name="description"
+      content="CVistan helps you build a professional CV in minutes. English & Kurdish/Arabic support coming soon."
+    />
+    <style>
+      :root { font-family: Arial, sans-serif; }
+      body { margin: 0; }
+      .wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+      .card { max-width: 720px; width: 100%; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; }
+      h1 { margin: 0 0 8px; font-size: 34px; line-height: 1.1; }
+      p { margin: 0 0 18px; font-size: 16px; color: #374151; }
+      .badge { display: inline-block; padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 999px; font-size: 12px; margin-bottom: 14px; }
+      ul { margin: 0; padding-left: 18px; color: #111827; }
+      li { margin: 8px 0; }
+      .cta { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+      a.btn { text-decoration: none; border: 1px solid #111827; padding: 10px 14px; border-radius: 10px; font-weight: 600; color: #111827; }
+      a.btn.secondary { border-color: #e5e7eb; color: #111827; }
+      footer { margin-top: 18px; font-size: 12px; color: #6b7280; }
+    </style>
   </head>
+
   <body>
-    <h1>CVistan is coming soon.</h1>
+    <main class="wrap">
+      <section class="card">
+        <div class="badge">Live test page</div>
+
+        <h1>CVistan</h1>
+        <p>Build a clean, professional CV fast. Kurdistan-first. Global-ready.</p>
+
+        <ul>
+          <li>Simple CV builder with modern templates</li>
+          <li>English + Arabic/Kurdish support (coming soon)</li>
+          <li>Export to PDF + Word (coming soon)</li>
+        </ul>
+
+        <div class="cta">
+          <a class="btn" href="#" onclick="alert('Demo only. Real builder coming soon!');return false;">Try demo</a>
+          <a class="btn secondary" href="mailto:info@cvistan.com">Contact</a>
+        </div>
+
+        <footer>
+          © <span id="year"></span> CVistan. All rights reserved.
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
