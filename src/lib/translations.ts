@@ -1,22 +1,15 @@
 // src/lib/translations.ts
-// Internationalization support for EN, AR, KU
-
 export const translations = {
   en: {
-    // App
-    app: "CV Maker",
-    tagline: "Create your professional CV in minutes",
+    app: "CVistan",
+    tagline: "Build your dream CV in minutes 🚀",
     selectLang: "Select Language",
-    
-    // Navigation
     back: "Back",
     next: "Next",
     step: "Step",
     of: "of",
     preview: "Preview",
     select: "Use This",
-    
-    // Steps
     personal: "Personal Info",
     summary: "About You",
     experience: "Experience",
@@ -25,8 +18,6 @@ export const translations = {
     languages: "Languages",
     design: "Choose Design",
     review: "Review & Export",
-    
-    // Personal fields
     name: "Full Name",
     nameT: "Your name as it appears on your CV",
     nameP: "e.g. John Smith",
@@ -48,14 +39,10 @@ export const translations = {
     opt: "optional",
     photo: "Add Photo",
     photoT: "Professional headshot recommended",
-    
-    // Summary
     sumTitle: "Professional Summary",
     sumT: "2-3 sentences about yourself",
     sumP: "I am a dedicated professional with...",
     sumH: "💡 Mention your experience, skills, and career goals",
-    
-    // Experience
     addExp: "Add Experience",
     noExp: "No experience yet",
     noExpH: "Add jobs, internships, or volunteer work",
@@ -70,8 +57,6 @@ export const translations = {
     desc: "Responsibilities",
     descT: "What did you do?",
     descP: "• Managed team of 5\n• Increased sales by 20%",
-    
-    // Education
     addEdu: "Add Education",
     noEdu: "No education yet",
     noEduH: "Add degrees, diplomas, or courses",
@@ -86,14 +71,18 @@ export const translations = {
     thesis: "Thesis/Project",
     thesisP: "e.g. Machine Learning in Healthcare",
     thesisH: "Optional - if relevant",
-    
-    // Skills
     skillsT: "What are you good at?",
     skillP: "Type skill and press Enter",
     skillH: "💡 Add both technical and soft skills",
     suggest: "Suggested:",
-    
-    // Languages
+    suggestedSkills: [
+      "Microsoft Office", "Communication", "Leadership", "Problem Solving", "Teamwork",
+      "Project Management", "Time Management", "Critical Thinking", "Customer Service", "Sales",
+      "Marketing", "Data Analysis", "Public Speaking", "Negotiation", "Adaptability",
+      "Creativity", "Attention to Detail", "Organization", "Decision Making", "Conflict Resolution",
+      "Networking", "Research", "Writing", "Presentation Skills", "Strategic Planning",
+      "Budgeting", "Social Media", "Microsoft Excel", "Google Workspace", "CRM Software"
+    ],
     langT: "Being multilingual is valuable!",
     addLang: "Add Language",
     langP: "e.g. English",
@@ -101,36 +90,24 @@ export const translations = {
     fluent: "Fluent",
     conv: "Conversational",
     basic: "Basic",
-    
-    // Design
     designT: "Pick a template that fits your style",
-    
-    // Review
     done: "Your CV is Ready! 🎉",
     downloadT: "Download your CV in your preferred format",
     edit: "Edit",
     restart: "Start Over",
-    
-    // Validation
     reqField: "This field is required",
     reqName: "Please enter your full name",
     reqTitle: "Please enter your job title",
     reqSection: "Please add at least one: Experience, Education, or Skill",
     validationError: "Please fix the errors before continuing",
-    
-    // Export
     exportTitle: "Export Options",
     downloadPdf: "Download PDF",
     downloadWord: "Download Word",
     generating: "Generating...",
-    
-    // Sharing
     shareTitle: "Share via Messaging",
     shareDesc: "Send your CV directly via WhatsApp or Telegram",
     shareWhatsapp: "WhatsApp",
     shareTelegram: "Telegram",
-    
-    // Save/Signup
     saveTitle: "Save Your CV?",
     saveDesc: "Create an account to save your CV and access it anytime",
     saveYes: "Yes, create account",
@@ -145,8 +122,6 @@ export const translations = {
     signupBtn: "Create Account & Save CV",
     signupSuccess: "Account created! Your CV has been saved.",
     passwordMismatch: "Passwords do not match",
-    
-    // Templates
     classic: "Classic",
     classicD: "Clean, traditional & ATS-friendly",
     modern: "Modern",
@@ -163,14 +138,11 @@ export const translations = {
     academicD: "Formal style for researchers",
     professional: "Professional",
     professionalD: "Balanced & versatile design",
-    
-    // Months
     months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   },
-  
   ar: {
-    app: "صانع السيرة الذاتية",
-    tagline: "أنشئ سيرتك المهنية في دقائق",
+    app: "CVistan",
+    tagline: "ابنِ سيرتك الذاتية في دقائق 🚀",
     selectLang: "اختر لغتك",
     back: "رجوع",
     next: "التالي",
@@ -243,6 +215,14 @@ export const translations = {
     skillP: "اكتب المهارة واضغط Enter",
     skillH: "💡 أضف المهارات التقنية والشخصية",
     suggest: "مقترحات:",
+    suggestedSkills: [
+      "مايكروسوفت أوفيس", "التواصل", "القيادة", "حل المشكلات", "العمل الجماعي",
+      "إدارة المشاريع", "إدارة الوقت", "التفكير النقدي", "خدمة العملاء", "المبيعات",
+      "التسويق", "تحليل البيانات", "الخطابة", "التفاوض", "التكيف",
+      "الإبداع", "الدقة", "التنظيم", "اتخاذ القرارات", "حل النزاعات",
+      "بناء العلاقات", "البحث", "الكتابة", "العروض التقديمية", "التخطيط الاستراتيجي",
+      "إعداد الميزانيات", "وسائل التواصل الاجتماعي", "إكسل", "جوجل", "برامج CRM"
+    ],
     langT: "إتقان عدة لغات ميزة قيمة!",
     addLang: "أضف لغة",
     langP: "مثال: العربية",
@@ -300,10 +280,9 @@ export const translations = {
     professionalD: "تصميم متوازن ومتعدد الاستخدامات",
     months: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
   },
-  
   ku: {
-    app: "دروستکەری CV",
-    tagline: "CVی پڕۆفیشناڵەکەت لە چەند خولەکدا دروست بکە",
+    app: "CVistan",
+    tagline: "CVەکەت لە چەند خولەکدا دروست بکە 🚀",
     selectLang: "زمان هەڵبژێرە",
     back: "گەڕانەوە",
     next: "دواتر",
@@ -376,6 +355,10 @@ export const translations = {
     skillP: "لێهاتوویی بنووسە و Enter دابگرە",
     skillH: "💡 لێهاتوویی تەکنیکی و نەرم زیاد بکە",
     suggest: "پێشنیارکراو:",
+    suggestedSkills: [
+      "مایکرۆسۆفت ئۆفیس", "پەیوەندی", "سەرکردایەتی", "چارەسەرکردنی کێشە", "کاری تیمی",
+      "بەڕێوەبردنی پڕۆژە", "بەڕێوەبردنی کات", "بیرکردنەوەی ڕەخنەیی", "خزمەتگوزاری کڕیار", "فرۆشتن"
+    ],
     langT: "زانینی چەند زمانێک بەهادارە!",
     addLang: "زمان زیاد بکە",
     langP: "بۆ نموونە: کوردی",
@@ -416,27 +399,23 @@ export const translations = {
     signupSuccess: "هەژمار دروست کرا! CVەکەت پاشەکەوت کرا.",
     passwordMismatch: "وشە نهێنییەکان یەک ناگرنەوە",
     classic: "کلاسیک",
-    classicD: "پاک و ڕێکخراو و گونجاو بۆ ATS",
+    classicD: "پاک و ڕێکخراو",
     modern: "مۆدێرن",
-    modernD: "تازە و سادە و هاوچەرخ",
+    modernD: "تازە و سادە",
     executive: "جێبەجێکار",
-    executiveD: "بەهێز و پڕۆفیشناڵ بۆ سەرکردەکان",
+    executiveD: "بەهێز و پڕۆفیشناڵ",
     creative: "داهێنەرانە",
-    creativeD: "ڕەنگین و تایبەت بۆ داهێنەران",
+    creativeD: "ڕەنگین و تایبەت",
     minimal: "سادە",
-    minimalD: "ئاسان و جوان و بێ تێکەڵەی",
+    minimalD: "ئاسان و جوان",
     tech: "تەکنیکی",
-    techD: "دیزاینی مۆدێرن بۆ پسپۆڕانی IT",
+    techD: "بۆ پسپۆڕانی IT",
     academic: "ئەکادیمی",
-    academicD: "ستایلی فەرمی بۆ توێژەران",
+    academicD: "بۆ توێژەران",
     professional: "پڕۆفیشناڵ",
-    professionalD: "دیزاینی هاوسەنگ و فرەکارە",
+    professionalD: "هاوسەنگ و فرەکارە",
     months: ["کانوونی دووەم", "شوبات", "ئازار", "نیسان", "ئایار", "حوزەیران", "تەممووز", "ئاب", "ئەیلوول", "تشرینی یەکەم", "تشرینی دووەم", "کانوونی یەکەم"],
   }
 };
 
 export type TranslationKey = keyof typeof translations.en;
-
-export function getTranslation(lang: 'en' | 'ar' | 'ku', key: TranslationKey): string | string[] {
-  return translations[lang]?.[key] || translations.en[key] || key;
-}
