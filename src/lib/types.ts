@@ -1,5 +1,12 @@
 // src/lib/types.ts
-// Core type definitions for CV Maker
+export interface SocialLinks {
+  linkedin: string;
+  github: string;
+  portfolio: string;
+  twitter: string;
+  instagram: string;
+  behance: string;
+}
 
 export interface PersonalInfo {
   fullName: string;
@@ -7,8 +14,9 @@ export interface PersonalInfo {
   email: string;
   phone: string;
   location: string;
-  linkedin: string;
+  dateOfBirth: string;
   photo: string | null;
+  socialLinks: SocialLinks;
 }
 
 export interface Experience {
@@ -50,6 +58,7 @@ export interface CVData {
 export interface ValidationErrors {
   fullName?: string;
   jobTitle?: string;
+  phone?: string;
   sections?: string;
   [key: string]: string | undefined;
 }
