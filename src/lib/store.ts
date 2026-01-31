@@ -1,20 +1,25 @@
 // src/lib/store.ts
-// Global state management with Zustand
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { CVData, LanguageCode, TemplateId, User, ValidationErrors } from './types';
+import type { CVData, LanguageCode, TemplateId } from './types';
 
-// Initial empty CV data
-const initialCVData: CVData = {
+const initialCV: CVData = {
   personal: {
     fullName: '',
     jobTitle: '',
     email: '',
     phone: '',
     location: '',
-    linkedin: '',
+    dateOfBirth: '',
     photo: null,
+    socialLinks: {
+      linkedin: '',
+      github: '',
+      portfolio: '',
+      twitter: '',
+      instagram: '',
+      behance: '',
+    },
   },
   summary: '',
   experience: [],
@@ -24,108 +29,66 @@ const initialCVData: CVData = {
 };
 
 interface CVStore {
-  // Language
+  cv: CVData;
   language: LanguageCode;
-  setLanguage: (lang: LanguageCode) => void;
-  
-  // Current step
-  step: number;
-  setStep: (step: number) => void;
-  
-  // Template
   template: TemplateId;
-  setTemplate: (template: TemplateId) => void;
-  
-  // CV Data
-  cvData: CVData;
-  setCvData: (data: CVData) => void;
-  updatePersonal: <K extends keyof CVData['personal']>(
-    key: K, 
-    value: CVData['personal'][K]
-  ) => void;
-  updateField: <K extends keyof CVData>(key: K, value: CVData[K]) => void;
-  
-  // Validation
-  validationErrors: ValidationErrors;
-  setValidationErrors: (errors: ValidationErrors) => void;
-  
-  // User auth
-  user: User | null;
   token: string | null;
-  setUser: (user: User | null, token?: string | null) => void;
-  logout: () => void;
-  
-  // Reset
+  setCV: (cv: CVData) => void;
+  updatePersonal: (key: keyof CVData['personal'], value: any) => void;
+  updateSocialLink: (key: string, value: string) => void;
+  setSummary: (summary: string) => void;
+  setExperience: (experience: CVData['experience']) => void;
+  setEducation: (education: CVData['education']) => void;
+  setSkills: (skills: string[]) => void;
+  setLanguages: (languages: CVData['languages']) => void;
+  setLanguage: (lang: LanguageCode) => void;
+  setTemplate: (template: TemplateId) => void;
+  setToken: (token: string | null) => void;
   reset: () => void;
 }
 
 export const useCVStore = create<CVStore>()(
   persist(
-    (set, get) => ({
-      // Language
+    (set) => ({
+      cv: initialCV,
       language: 'en',
-      setLanguage: (language) => set({ language }),
-      
-      // Step
-      step: 0,
-      setStep: (step) => set({ step }),
-      
-      // Template
       template: 'modern',
-      setTemplate: (template) => set({ template }),
-      
-      // CV Data
-      cvData: initialCVData,
-      setCvData: (cvData) => set({ cvData }),
-      updatePersonal: (key, value) => set((state) => ({
-        cvData: {
-          ...state.cvData,
-          personal: {
-            ...state.cvData.personal,
-            [key]: value,
-          },
-        },
-      })),
-      updateField: (key, value) => set((state) => ({
-        cvData: {
-          ...state.cvData,
-          [key]: value,
-        },
-      })),
-      
-      // Validation
-      validationErrors: {},
-      setValidationErrors: (validationErrors) => set({ validationErrors }),
-      
-      // User
-      user: null,
       token: null,
-      setUser: (user, token = null) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
-      
-      // Reset
-      reset: () => set({
-        step: 0,
-        cvData: initialCVData,
-        validationErrors: {},
-      }),
+      setCV: (cv) => set({ cv }),
+      updatePersonal: (key, value) =>
+        set((state) => ({
+          cv: {
+            ...state.cv,
+            personal: { ...state.cv.personal, [key]: value },
+          },
+        })),
+      updateSocialLink: (key, value) =>
+        set((state) => ({
+          cv: {
+            ...state.cv,
+            personal: {
+              ...state.cv.personal,
+              socialLinks: { ...state.cv.personal.socialLinks, [key]: value },
+            },
+          },
+        })),
+      setSummary: (summary) =>
+        set((state) => ({ cv: { ...state.cv, summary } })),
+      setExperience: (experience) =>
+        set((state) => ({ cv: { ...state.cv, experience } })),
+      setEducation: (education) =>
+        set((state) => ({ cv: { ...state.cv, education } })),
+      setSkills: (skills) =>
+        set((state) => ({ cv: { ...state.cv, skills } })),
+      setLanguages: (languages) =>
+        set((state) => ({ cv: { ...state.cv, languages } })),
+      setLanguage: (language) => set({ language }),
+      setTemplate: (template) => set({ template }),
+      setToken: (token) => set({ token }),
+      reset: () => set({ cv: initialCV, token: null }),
     }),
     {
-      name: 'cv-maker-storage',
-      partialize: (state) => ({
-        language: state.language,
-        template: state.template,
-        cvData: state.cvData,
-        user: state.user,
-        token: state.token,
-      }),
+      name: 'cv-storage',
     }
   )
 );
-
-// Selector hooks for performance
-export const useLanguage = () => useCVStore((state) => state.language);
-export const useStep = () => useCVStore((state) => state.step);
-export const useTemplate = () => useCVStore((state) => state.template);
-export const useCVData = () => useCVStore((state) => state.cvData);
-export const useUser = () => useCVStore((state) => state.user);
