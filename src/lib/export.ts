@@ -1,146 +1,184 @@
 // src/lib/export.ts
 import { CVData } from './types';
 
-const interviewTipsPDF = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Interview Tips - CVistan</title>
-  <style>
-    body { font-family: Georgia, serif; font-size: 11pt; line-height: 1.6; margin: 40px; color: #333; }
-    h1 { color: #1a365d; text-align: center; border-bottom: 3px solid #3182ce; padding-bottom: 10px; }
-    h2 { color: #2d3748; margin-top: 25px; font-size: 14pt; }
-    .question { background: #f7fafc; padding: 15px; border-left: 4px solid #3182ce; margin: 15px 0; }
-    .question h3 { color: #3182ce; margin: 0 0 10px 0; font-size: 12pt; }
-    .tip { color: #718096; font-style: italic; margin: 10px 0; }
-    .sample { background: #edf2f7; padding: 10px; border-radius: 5px; margin: 10px 0; }
-    .placeholder { background: #fef3c7; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
-    .footer { text-align: center; margin-top: 40px; color: #a0aec0; font-size: 10pt; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-  </style>
-</head>
-<body>
-  <h1>🎯 Top 15 Interview Questions & Tips</h1>
-  <p style="text-align: center; color: #718096;">Prepared by CVistan - Your Professional CV Builder</p>
+// Interview Tips PDF content
+const generateInterviewTipsPDF = async () => {
+  const { jsPDF } = await import('jspdf');
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  
+  const pageWidth = 210;
+  const margin = 20;
+  const contentWidth = pageWidth - (margin * 2);
+  let y = 20;
 
-  <div class="question">
-    <h3>1. "Tell me about yourself"</h3>
-    <p class="tip">💡 Keep it professional, 2 minutes max. Focus on career, not personal life.</p>
-    <div class="sample"><strong>Sample:</strong> "I have <span class="placeholder">[X years]</span> of experience as a <span class="placeholder">[Job Title]</span>. I specialize in <span class="placeholder">[Key Skills]</span> and have worked with <span class="placeholder">[Companies]</span>. I'm excited about this role because <span class="placeholder">[Reason]</span>."</div>
-  </div>
+  // Helper functions
+  const addText = (text: string, size: number, style: 'normal' | 'bold' = 'normal', color: number[] = [0, 0, 0]) => {
+    pdf.setFontSize(size);
+    pdf.setFont('helvetica', style);
+    pdf.setTextColor(color[0], color[1], color[2]);
+  };
 
-  <div class="question">
-    <h3>2. "Why do you want to work here?"</h3>
-    <p class="tip">💡 Research the company beforehand. Mention specific things you admire.</p>
-    <div class="sample"><strong>Sample:</strong> "I admire <span class="placeholder">[Company]</span>'s work in <span class="placeholder">[Area]</span>. My skills in <span class="placeholder">[Skills]</span> align perfectly, and I can contribute to <span class="placeholder">[Goal]</span>."</div>
-  </div>
+  const checkNewPage = (needed: number) => {
+    if (y + needed > 280) {
+      pdf.addPage();
+      y = 20;
+    }
+  };
 
-  <div class="question">
-    <h3>3. "What are your greatest strengths?"</h3>
-    <p class="tip">💡 Choose 2-3 strengths relevant to the job. Give examples.</p>
-    <div class="sample"><strong>Sample:</strong> "My strengths are <span class="placeholder">[Strength 1]</span> and <span class="placeholder">[Strength 2]</span>. At <span class="placeholder">[Company]</span>, I <span class="placeholder">[Achievement]</span>."</div>
-  </div>
+  // Title
+  addText('', 24, 'bold', [26, 54, 93]);
+  pdf.text('Top 15 Interview Questions & Tips', pageWidth / 2, y, { align: 'center' });
+  y += 10;
 
-  <div class="question">
-    <h3>4. "What is your greatest weakness?"</h3>
-    <p class="tip">💡 Be honest but show you're improving. Never say "perfectionist."</p>
-    <div class="sample"><strong>Sample:</strong> "I used to struggle with <span class="placeholder">[Weakness]</span>. I've been working on it by <span class="placeholder">[Action]</span> and seeing improvement."</div>
-  </div>
+  addText('', 10, 'normal', [113, 128, 150]);
+  pdf.text('Prepared by CVistan - Your Professional CV Builder', pageWidth / 2, y, { align: 'center' });
+  y += 15;
 
-  <div class="question">
-    <h3>5. "Where do you see yourself in 5 years?"</h3>
-    <p class="tip">💡 Show ambition but also commitment to the company.</p>
-    <div class="sample"><strong>Sample:</strong> "In 5 years, I see myself as a <span class="placeholder">[Role]</span>, contributing to <span class="placeholder">[Company Goals]</span>."</div>
-  </div>
+  // Questions data
+  const questions = [
+    {
+      q: '1. "Tell me about yourself"',
+      tip: 'Keep it professional, 2 minutes max. Focus on career, not personal life.',
+      sample: 'I have [X years] of experience as a [Job Title]. I specialize in [Key Skills] and have worked with [Companies]. I\'m excited about this role because [Reason].'
+    },
+    {
+      q: '2. "Why do you want to work here?"',
+      tip: 'Research the company beforehand. Mention specific things you admire.',
+      sample: 'I admire [Company]\'s work in [Area]. My skills in [Skills] align perfectly, and I can contribute to [Goal].'
+    },
+    {
+      q: '3. "What are your greatest strengths?"',
+      tip: 'Choose 2-3 strengths relevant to the job. Give examples.',
+      sample: 'My strengths are [Strength 1] and [Strength 2]. At [Company], I [Achievement].'
+    },
+    {
+      q: '4. "What is your greatest weakness?"',
+      tip: 'Be honest but show you\'re improving. Never say "perfectionist."',
+      sample: 'I used to struggle with [Weakness]. I\'ve been working on it by [Action] and seeing improvement.'
+    },
+    {
+      q: '5. "Where do you see yourself in 5 years?"',
+      tip: 'Show ambition but also commitment to the company.',
+      sample: 'In 5 years, I see myself as a [Role], contributing to [Company Goals].'
+    },
+    {
+      q: '6. "Why did you leave your last job?"',
+      tip: 'Stay positive. Never badmouth previous employers.',
+      sample: 'I learned a lot at [Company], but I\'m seeking new challenges in [Area].'
+    },
+    {
+      q: '7. "Tell me about a challenge you faced"',
+      tip: 'Use STAR: Situation, Task, Action, Result.',
+      sample: 'At [Company], we faced [Challenge]. I [Action], resulting in [Outcome].'
+    },
+    {
+      q: '8. "What are your salary expectations?"',
+      tip: 'Research market rates. Give a range, not exact number.',
+      sample: 'Based on my research, I\'m looking for [$X - $Y], but I\'m open to discussion.'
+    },
+    {
+      q: '9. "Why should we hire you?"',
+      tip: 'Summarize your unique value confidently.',
+      sample: 'I bring [Skills] with [X years] experience. I\'ve [Achievement] and can deliver results here.'
+    },
+    {
+      q: '10. "Do you have questions for us?"',
+      tip: 'Always say YES! Ask about role, team, or growth.',
+      sample: 'What does success look like in 6 months? Tell me about the team. What challenges does the team face?'
+    },
+    {
+      q: '11. "Describe your work style"',
+      tip: 'Be honest and relate it to job requirements.',
+      sample: 'I\'m [collaborative/independent] and thrive in [environment]. I ensure clear communication.'
+    },
+    {
+      q: '12. "How do you handle stress?"',
+      tip: 'Give a specific example of handling pressure.',
+      sample: 'I handle stress by [Method]. When [Situation], I [Action] and delivered on time.'
+    },
+    {
+      q: '13. "What motivates you?"',
+      tip: 'Connect your motivation to the job.',
+      sample: 'I\'m motivated by [Driver]. This role excites me because [Aspect].'
+    },
+    {
+      q: '14. "Tell me about teamwork experience"',
+      tip: 'Highlight collaboration and your contribution.',
+      sample: 'I worked with [X people] on [Project]. My role was [Role]. We achieved [Result].'
+    },
+    {
+      q: '15. "What do you know about our company?"',
+      tip: 'Do your homework! Research website, news, LinkedIn.',
+      sample: '[Company] leads in [Field]. I\'m impressed by [Achievement]. Your mission resonates with me.'
+    }
+  ];
 
-  <div class="question">
-    <h3>6. "Why did you leave your last job?"</h3>
-    <p class="tip">💡 Stay positive. Never badmouth previous employers.</p>
-    <div class="sample"><strong>Sample:</strong> "I learned a lot at <span class="placeholder">[Company]</span>, but I'm seeking new challenges in <span class="placeholder">[Area]</span>."</div>
-  </div>
+  // Add questions
+  questions.forEach((item, index) => {
+    checkNewPage(45);
 
-  <div class="question">
-    <h3>7. "Tell me about a challenge you faced"</h3>
-    <p class="tip">💡 Use STAR: Situation, Task, Action, Result.</p>
-    <div class="sample"><strong>Sample:</strong> "At <span class="placeholder">[Company]</span>, we faced <span class="placeholder">[Challenge]</span>. I <span class="placeholder">[Action]</span>, resulting in <span class="placeholder">[Outcome]</span>."</div>
-  </div>
+    // Question box
+    pdf.setFillColor(247, 250, 252);
+    pdf.roundedRect(margin, y, contentWidth, 40, 3, 3, 'F');
+    pdf.setDrawColor(49, 130, 206);
+    pdf.setLineWidth(0.5);
+    pdf.line(margin, y, margin, y + 40);
 
-  <div class="question">
-    <h3>8. "What are your salary expectations?"</h3>
-    <p class="tip">💡 Research market rates. Give a range, not exact number.</p>
-    <div class="sample"><strong>Sample:</strong> "Based on my research, I'm looking for <span class="placeholder">[$X - $Y]</span>, but I'm open to discussion."</div>
-  </div>
+    // Question title
+    addText('', 11, 'bold', [49, 130, 206]);
+    pdf.text(item.q, margin + 5, y + 8);
 
-  <div class="question">
-    <h3>9. "Why should we hire you?"</h3>
-    <p class="tip">💡 Summarize your unique value confidently.</p>
-    <div class="sample"><strong>Sample:</strong> "I bring <span class="placeholder">[Skills]</span> with <span class="placeholder">[X years]</span> experience. I've <span class="placeholder">[Achievement]</span> and can deliver results here."</div>
-  </div>
+    // Tip
+    addText('', 9, 'normal', [113, 128, 150]);
+    pdf.text('Tip: ' + item.tip, margin + 5, y + 16);
 
-  <div class="question">
-    <h3>10. "Do you have questions for us?"</h3>
-    <p class="tip">💡 Always say YES! Ask about role, team, or growth.</p>
-    <div class="sample"><strong>Ask:</strong> "What does success look like in 6 months?" • "Tell me about the team" • "What challenges does the team face?" • "What growth opportunities exist?"</div>
-  </div>
+    // Sample answer
+    addText('', 9, 'normal', [74, 85, 104]);
+    const sampleLines = pdf.splitTextToSize('Sample: ' + item.sample, contentWidth - 10);
+    pdf.text(sampleLines, margin + 5, y + 24);
 
-  <div class="question">
-    <h3>11. "Describe your work style"</h3>
-    <p class="tip">💡 Be honest and relate it to job requirements.</p>
-    <div class="sample"><strong>Sample:</strong> "I'm <span class="placeholder">[collaborative/independent]</span> and thrive in <span class="placeholder">[environment]</span>. I ensure clear communication."</div>
-  </div>
+    y += 45;
+  });
 
-  <div class="question">
-    <h3>12. "How do you handle stress?"</h3>
-    <p class="tip">💡 Give a specific example of handling pressure.</p>
-    <div class="sample"><strong>Sample:</strong> "I handle stress by <span class="placeholder">[Method]</span>. When <span class="placeholder">[Situation]</span>, I <span class="placeholder">[Action]</span> and delivered on time."</div>
-  </div>
+  // Quick Tips Section
+  checkNewPage(60);
+  y += 10;
 
-  <div class="question">
-    <h3>13. "What motivates you?"</h3>
-    <p class="tip">💡 Connect your motivation to the job.</p>
-    <div class="sample"><strong>Sample:</strong> "I'm motivated by <span class="placeholder">[Driver]</span>. This role excites me because <span class="placeholder">[Aspect]</span>."</div>
-  </div>
+  addText('', 14, 'bold', [45, 55, 72]);
+  pdf.text('Quick Tips Before Your Interview', margin, y);
+  y += 10;
 
-  <div class="question">
-    <h3>14. "Tell me about teamwork experience"</h3>
-    <p class="tip">💡 Highlight collaboration and your contribution.</p>
-    <div class="sample"><strong>Sample:</strong> "I worked with <span class="placeholder">[X people]</span> on <span class="placeholder">[Project]</span>. My role was <span class="placeholder">[Role]</span>. We achieved <span class="placeholder">[Result]</span>."</div>
-  </div>
+  const tips = [
+    'Research the company thoroughly',
+    'Practice your answers out loud',
+    'Prepare 3-5 questions to ask them',
+    'Dress professionally',
+    'Arrive 10-15 minutes early',
+    'Bring copies of your CV',
+    'Make eye contact and smile',
+    'Send a thank-you email within 24 hours'
+  ];
 
-  <div class="question">
-    <h3>15. "What do you know about our company?"</h3>
-    <p class="tip">💡 Do your homework! Research website, news, LinkedIn.</p>
-    <div class="sample"><strong>Sample:</strong> "<span class="placeholder">[Company]</span> leads in <span class="placeholder">[Field]</span>. I'm impressed by <span class="placeholder">[Achievement]</span>. Your mission resonates with me."</div>
-  </div>
+  tips.forEach(tip => {
+    addText('', 10, 'normal', [74, 85, 104]);
+    pdf.text('✓ ' + tip, margin + 5, y);
+    y += 6;
+  });
 
-  <h2>📝 Quick Tips</h2>
-  <ul>
-    <li>✅ Research the company</li>
-    <li>✅ Practice answers out loud</li>
-    <li>✅ Prepare questions to ask</li>
-    <li>✅ Dress professionally</li>
-    <li>✅ Arrive 10-15 min early</li>
-    <li>✅ Bring CV copies</li>
-    <li>✅ Make eye contact & smile</li>
-    <li>✅ Send thank-you email within 24hrs</li>
-  </ul>
+  // Footer
+  y += 10;
+  pdf.setDrawColor(226, 232, 240);
+  pdf.line(margin, y, pageWidth - margin, y);
+  y += 8;
 
-  <div class="footer">
-    <p>📄 <strong>CVistan</strong> - Professional CV Builder</p>
-    <p>Good luck! 🍀</p>
-  </div>
-</body>
-</html>
-`;
+  addText('', 10, 'bold', [49, 130, 206]);
+  pdf.text('CVistan - Professional CV Builder', pageWidth / 2, y, { align: 'center' });
+  y += 6;
+  addText('', 10, 'normal', [113, 128, 150]);
+  pdf.text('Good luck with your interview!', pageWidth / 2, y, { align: 'center' });
 
-function downloadInterviewTips(): void {
-  const blob = new Blob([interviewTipsPDF], { type: 'text/html' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'Interview-Tips.html';
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
+  pdf.save('Interview-Tips.pdf');
+};
 
 export async function generatePDF(
   element: HTMLElement | null,
@@ -186,9 +224,9 @@ export async function generatePDF(
     
     pdf.save(filename);
     
-    // Auto-download Interview Tips
+    // Auto-download Interview Tips PDF after 1 second
     setTimeout(() => {
-      downloadInterviewTips();
+      generateInterviewTipsPDF();
     }, 1000);
     
     return true;
@@ -213,69 +251,120 @@ export async function generateWord(
       return year;
     };
 
+    // Sort experience and education by year (newest first)
+    const sortedExperience = [...cv.experience].sort((a, b) => {
+      const yearA = parseInt(a.startYear) || 0;
+      const yearB = parseInt(b.startYear) || 0;
+      return yearB - yearA;
+    });
+
+    const sortedEducation = [...cv.education].sort((a, b) => {
+      const yearA = parseInt(a.gradYear) || 0;
+      const yearB = parseInt(b.gradYear) || 0;
+      return yearB - yearA;
+    });
+
     const html = `
-      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
-      <head><meta charset="utf-8"><title>CV</title>
-      <style>
-        body { font-family: Calibri, Arial; font-size: 11pt; line-height: 1.5; margin: 1in; }
-        h1 { font-size: 24pt; color: #1a365d; margin-bottom: 5pt; text-align: center; }
-        h2 { font-size: 14pt; color: #2d3748; border-bottom: 2px solid #3182ce; padding-bottom: 5pt; margin-top: 15pt; }
-        .subtitle { font-size: 14pt; color: #4a5568; text-align: center; margin-bottom: 10pt; }
-        .contact { color: #718096; font-size: 10pt; text-align: center; margin-bottom: 20pt; }
-        .entry { margin-bottom: 10pt; }
-        .job-title { font-weight: bold; }
-        .company { color: #3182ce; }
-        .date { color: #718096; font-style: italic; }
-      </style>
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="utf-8">
+        <title>CV - ${cv.personal.fullName}</title>
+        <!--[if gte mso 9]>
+        <xml>
+          <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+          </w:WordDocument>
+        </xml>
+        <![endif]-->
+        <style>
+          @page { margin: 1in; }
+          body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #333; }
+          h1 { font-size: 24pt; color: #1a365d; margin-bottom: 5pt; text-align: center; }
+          h2 { font-size: 14pt; color: #2d3748; border-bottom: 2px solid #3182ce; padding-bottom: 5pt; margin-top: 20pt; margin-bottom: 10pt; }
+          .subtitle { font-size: 14pt; color: #4a5568; text-align: center; margin-bottom: 10pt; }
+          .contact { color: #718096; font-size: 10pt; text-align: center; margin-bottom: 20pt; }
+          .summary { background-color: #f7fafc; padding: 10pt; margin-bottom: 15pt; border-left: 3pt solid #3182ce; }
+          .entry { margin-bottom: 15pt; }
+          .entry-header { display: flex; justify-content: space-between; }
+          .job-title { font-weight: bold; font-size: 12pt; color: #1a202c; }
+          .company { color: #3182ce; font-size: 11pt; }
+          .date { color: #718096; font-size: 10pt; font-style: italic; }
+          .description { color: #4a5568; font-size: 10pt; margin-top: 5pt; white-space: pre-line; }
+          .skills { margin-top: 5pt; }
+          .skill-tag { display: inline-block; background-color: #e2e8f0; padding: 3pt 8pt; margin: 2pt; border-radius: 3pt; font-size: 10pt; }
+          .languages { margin-top: 5pt; }
+          .lang-item { margin-bottom: 3pt; }
+        </style>
       </head>
       <body>
         <h1>${cv.personal.fullName || 'Your Name'}</h1>
         <p class="subtitle">${cv.personal.jobTitle || ''}</p>
-        <p class="contact">${[cv.personal.email, cv.personal.phone, cv.personal.location].filter(Boolean).join(' | ')}</p>
+        <p class="contact">
+          ${[cv.personal.email, cv.personal.phone, cv.personal.location].filter(Boolean).join(' | ')}
+        </p>
         
-        ${cv.summary ? `<h2>Professional Summary</h2><p>${cv.summary}</p>` : ''}
+        ${cv.summary ? `
+          <h2>Professional Summary</h2>
+          <div class="summary">${cv.summary}</div>
+        ` : ''}
         
-        ${cv.experience.length > 0 ? `
+        ${sortedExperience.length > 0 ? `
           <h2>Work Experience</h2>
-          ${cv.experience.map(exp => `
+          ${sortedExperience.map(exp => `
             <div class="entry">
               <p class="job-title">${exp.jobTitle || ''}</p>
-              <p><span class="company">${exp.company || ''}</span> | 
-                 <span class="date">${formatDate(exp.startMonth, exp.startYear)} - ${exp.current ? 'Present' : formatDate(exp.endMonth, exp.endYear)}</span></p>
-              ${exp.description ? `<p>${exp.description.replace(/\n/g, '<br>')}</p>` : ''}
+              <p class="company">${exp.company || ''}</p>
+              <p class="date">${formatDate(exp.startMonth, exp.startYear)} - ${exp.current ? 'Present' : formatDate(exp.endMonth, exp.endYear)}</p>
+              ${exp.description ? `<p class="description">${exp.description}</p>` : ''}
             </div>
           `).join('')}
         ` : ''}
         
-        ${cv.education.length > 0 ? `
+        ${sortedEducation.length > 0 ? `
           <h2>Education</h2>
-          ${cv.education.map(edu => `
+          ${sortedEducation.map(edu => `
             <div class="entry">
               <p class="job-title">${edu.degree || ''}</p>
-              <p><span class="company">${edu.institution || ''}</span>
-                 ${edu.gradYear ? `| <span class="date">${formatDate(edu.gradMonth, edu.gradYear)}</span>` : ''}
-                 ${edu.gpa ? `| GPA: ${edu.gpa}` : ''}</p>
+              <p class="company">${edu.institution || ''}</p>
+              <p class="date">${edu.gradYear ? formatDate(edu.gradMonth, edu.gradYear) : ''}${edu.gpa ? ' | GPA: ' + edu.gpa : ''}</p>
+              ${edu.thesisTitle ? `<p class="description">Thesis: ${edu.thesisTitle}</p>` : ''}
             </div>
           `).join('')}
         ` : ''}
         
-        ${cv.skills.length > 0 ? `<h2>Skills</h2><p>${cv.skills.join(' • ')}</p>` : ''}
+        ${cv.skills.length > 0 ? `
+          <h2>Skills</h2>
+          <div class="skills">
+            ${cv.skills.map(s => `<span class="skill-tag">${s}</span>`).join(' ')}
+          </div>
+        ` : ''}
         
-        ${cv.languages.length > 0 ? `<h2>Languages</h2><p>${cv.languages.map(l => `${l.name} (${l.level})`).join(' • ')}</p>` : ''}
+        ${cv.languages.length > 0 ? `
+          <h2>Languages</h2>
+          <div class="languages">
+            ${cv.languages.map(l => `<p class="lang-item"><strong>${l.name}</strong> - ${l.level}</p>`).join('')}
+          </div>
+        ` : ''}
       </body>
       </html>
     `;
     
-    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const blob = new Blob(['\ufeff', html], { 
+      type: 'application/vnd.ms-word;charset=utf-8' 
+    });
+    
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = filename;
+    link.download = filename.endsWith('.doc') ? filename : filename.replace('.docx', '.doc');
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
     
-    // Auto-download Interview Tips
+    // Auto-download Interview Tips PDF after 1 second
     setTimeout(() => {
-      downloadInterviewTips();
+      generateInterviewTipsPDF();
     }, 1000);
     
     return true;
