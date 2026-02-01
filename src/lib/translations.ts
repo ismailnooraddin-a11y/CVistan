@@ -23,7 +23,7 @@ export const translations = {
     nameP: "Ahmed Akram",
     title: "Job Title",
     titleT: "Position you're applying for",
-    titleP: "Software Engineer",
+    titleP: "Senior Accountant",
     email: "Email",
     emailT: "Professional email address",
     emailP: "ahmed.akram@email.com",
@@ -57,13 +57,13 @@ export const translations = {
     photoT: "Professional headshot recommended",
     sumTitle: "Professional Summary",
     sumT: "2-3 sentences about yourself",
-    sumP: "I am a dedicated professional with...",
+    sumP: "Detail-oriented and highly analytical Senior Accountant with over 5 years of experience in financial reporting, budgeting, and tax preparation. Proven track record of improving financial processes, reducing costs by 15%, and ensuring compliance with international accounting standards (IFRS). Skilled in QuickBooks, SAP, and advanced Excel. Seeking to leverage my expertise in financial analysis and team leadership to contribute to a dynamic organization's growth and profitability.",
     sumH: "💡 Mention your experience, skills, and career goals",
     addExp: "Add Experience",
     noExp: "No experience yet",
     noExpH: "Add jobs, internships, or volunteer work",
     company: "Company",
-    companyP: "Google",
+    companyP: "ABC Financial Services",
     startD: "Start Date",
     endD: "End Date",
     current: "I currently work here",
@@ -72,12 +72,12 @@ export const translations = {
     year: "Year",
     desc: "Responsibilities",
     descT: "What did you do?",
-    descP: "• Managed team of 5\n• Increased sales by 20%",
+    descP: "• Prepared monthly, quarterly, and annual financial statements\n• Managed accounts payable/receivable for 50+ clients\n• Reduced operational costs by 15% through process optimization\n• Led a team of 3 junior accountants",
     addEdu: "Add Education",
     noEdu: "No education yet",
     noEduH: "Add degrees, diplomas, or courses",
     degree: "Degree",
-    degreeP: "Bachelor's in Computer Science",
+    degreeP: "Bachelor's in Accounting",
     inst: "Institution",
     instP: "Salahaddin University",
     gradD: "Graduation Date",
@@ -85,7 +85,7 @@ export const translations = {
     gpaP: "3.8/4.0",
     gpaH: "Optional - add if impressive",
     thesis: "Thesis/Project",
-    thesisP: "Machine Learning in Healthcare",
+    thesisP: "Financial Analysis of SMEs in Kurdistan Region",
     thesisH: "Optional - if relevant",
     skillsT: "What are you good at?",
     skillP: "Type skill and press Enter",
@@ -180,7 +180,7 @@ export const translations = {
     nameP: "أحمد أكرم",
     title: "المسمى الوظيفي",
     titleT: "الوظيفة التي تتقدم لها",
-    titleP: "مهندس برمجيات",
+    titleP: "محاسب أول",
     email: "البريد الإلكتروني",
     emailT: "بريد إلكتروني احترافي",
     emailP: "ahmed.akram@email.com",
@@ -214,13 +214,13 @@ export const translations = {
     photoT: "يُفضل صورة احترافية",
     sumTitle: "الملخص المهني",
     sumT: "2-3 جمل عن نفسك",
-    sumP: "أنا متخصص ذو خبرة في...",
+    sumP: "محاسب أول دقيق وتحليلي مع أكثر من 5 سنوات من الخبرة في إعداد التقارير المالية والميزانيات وإعداد الضرائب. سجل حافل في تحسين العمليات المالية وخفض التكاليف بنسبة 15% وضمان الامتثال للمعايير المحاسبية الدولية (IFRS). ماهر في QuickBooks و SAP و Excel المتقدم. أسعى للاستفادة من خبرتي في التحليل المالي وقيادة الفريق للمساهمة في نمو وربحية المؤسسة.",
     sumH: "💡 اذكر خبرتك ومهاراتك وأهدافك المهنية",
     addExp: "أضف خبرة",
     noExp: "لا توجد خبرات بعد",
     noExpH: "أضف الوظائف أو التدريب أو العمل التطوعي",
     company: "الشركة",
-    companyP: "أرامكو",
+    companyP: "شركة ABC للخدمات المالية",
     startD: "تاريخ البدء",
     endD: "تاريخ الانتهاء",
     current: "أعمل هنا حالياً",
@@ -229,12 +229,12 @@ export const translations = {
     year: "السنة",
     desc: "المسؤوليات",
     descT: "ماذا كانت مهامك؟",
-    descP: "• إدارة فريق من 5 أشخاص\n• زيادة المبيعات بنسبة 20%",
+    descP: "• إعداد البيانات المالية الشهرية والربعية والسنوية\n• إدارة الحسابات الدائنة والمدينة لأكثر من 50 عميل\n• خفض التكاليف التشغيلية بنسبة 15%\n• قيادة فريق من 3 محاسبين",
     addEdu: "أضف تعليم",
     noEdu: "لا يوجد تعليم بعد",
     noEduH: "أضف الشهادات أو الدبلومات أو الدورات",
     degree: "الشهادة",
-    degreeP: "بكالوريوس علوم الحاسب",
+    degreeP: "بكالوريوس محاسبة",
     inst: "المؤسسة التعليمية",
     instP: "جامعة صلاح الدين",
     gradD: "تاريخ التخرج",
@@ -242,7 +242,7 @@ export const translations = {
     gpaP: "4.5 من 5",
     gpaH: "اختياري - أضفه إذا كان مميزاً",
     thesis: "الرسالة/المشروع",
-    thesisP: "الذكاء الاصطناعي في الرعاية الصحية",
+    thesisP: "التحليل المالي للشركات الصغيرة والمتوسطة في إقليم كردستان",
     thesisH: "اختياري - إذا كان ذا صلة",
     skillsT: "ما الذي تجيده؟",
     skillP: "اكتب المهارة واضغط Enter",
@@ -337,7 +337,7 @@ export const translations = {
     nameP: "ئەحمەد ئەکرەم",
     title: "ناونیشانی کار",
     titleT: "ئەو پۆستەی بۆی پێشکەش دەکەیت",
-    titleP: "ئەندازیاری نەرمەکاڵا",
+    titleP: "ژمێریاری باڵا",
     email: "ئیمەیڵ",
     emailT: "ئیمەیڵی پڕۆفیشناڵ",
     emailP: "ahmed.akram@email.com",
@@ -371,13 +371,13 @@ export const translations = {
     photoT: "وێنەی پڕۆفیشناڵ پێشنیار دەکرێت",
     sumTitle: "پوختەی پڕۆفیشناڵ",
     sumT: "2-3 ڕستە دەربارەی خۆت",
-    sumP: "من پسپۆڕێکم لەگەڵ ئەزموون لە...",
+    sumP: "ژمێریارێکی باڵا و وردبینم لەگەڵ زیاتر لە 5 ساڵ ئەزموون لە ڕاپۆرتی دارایی، بودجە، و ئامادەکردنی باج. کارنامەیەکی سەرکەوتوو لە باشترکردنی پرۆسەی دارایی، کەمکردنەوەی تێچوو بە 15%، و دڵنیابوون لە پابەندبوون بە ستانداردەکانی ژمێریاری نێودەوڵەتی (IFRS). شارەزا لە QuickBooks، SAP، و Excel. بە شوێنی بەکارهێنانی شارەزایی خۆم لە شیکاری دارایی و سەرکردایەتی تیم بۆ بەشداریکردن لە گەشەی دامەزراوەیەک.",
     sumH: "💡 ئەزموون و لێهاتوویی و ئامانجەکانت باس بکە",
     addExp: "ئەزموون زیاد بکە",
     noExp: "هێشتا ئەزموون نییە",
     noExpH: "کار، ڕاهێنان، یان کاری خۆبەخش زیاد بکە",
     company: "کۆمپانیا",
-    companyP: "گووگڵ",
+    companyP: "کۆمپانیای ABC بۆ خزمەتگوزاری دارایی",
     startD: "بەرواری دەستپێکردن",
     endD: "بەرواری کۆتایی",
     current: "ئێستا لێرە کار دەکەم",
@@ -386,12 +386,12 @@ export const translations = {
     year: "ساڵ",
     desc: "بەرپرسیاریەتییەکان",
     descT: "چیت کرد؟",
-    descP: "• بەڕێوەبردنی تیمێکی 5 کەسی\n• زیادکردنی فرۆشتن بە 20%",
+    descP: "• ئامادەکردنی ڕاپۆرتی دارایی مانگانە، سێ مانگی، و ساڵانە\n• بەڕێوەبردنی حسابەکانی داهات و خەرجی بۆ زیاتر لە 50 موشتەری\n• کەمکردنەوەی تێچووی کارگێڕی بە 15%\n• سەرکردایەتی تیمێک لە 3 ژمێریار",
     addEdu: "خوێندن زیاد بکە",
     noEdu: "هێشتا خوێندن نییە",
     noEduH: "بڕوانامە، دیپلۆم، یان کۆرس زیاد بکە",
     degree: "بڕوانامە",
-    degreeP: "بەکالۆریۆس لە زانستی کۆمپیوتەر",
+    degreeP: "بەکالۆریۆس لە ژمێریاری",
     inst: "دامەزراوەی خوێندن",
     instP: "زانکۆی سەلاحەددین",
     gradD: "بەرواری دەرچوون",
@@ -399,7 +399,7 @@ export const translations = {
     gpaP: "85%",
     gpaH: "هەڵبژاردەیی - زیادی بکە ئەگەر باش بوو",
     thesis: "تێزی/پڕۆژە",
-    thesisP: "AI لە تەندروستیدا",
+    thesisP: "شیکاری دارایی کۆمپانیا بچووک و مامناوەندەکان لە هەرێمی کوردستان",
     thesisH: "هەڵبژاردەیی - ئەگەر پەیوەندیدار بوو",
     skillsT: "لە چیدا شارەزایت؟",
     skillP: "لێهاتوویی بنووسە و Enter دابگرە",
