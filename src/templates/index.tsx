@@ -1,5 +1,5 @@
 // src/templates/index.tsx
-// 8 Professional CV Templates - With proper alignment and sorting
+// 4 Professional CV Templates - Morgan, Catrine, Sarah, Olivia
 
 'use client';
 
@@ -20,8 +20,11 @@ const fmtDate = (m: string, y: string, cur: boolean, pres: string, mos: string[]
   return y;
 };
 
-// Sort by year helper (newest first)
-const sortByYear = <T extends { startYear?: string; gradYear?: string }>(items: T[], field: 'startYear' | 'gradYear'): T[] => {
+// Sort by year (newest first)
+const sortByYear = <T extends { startYear?: string; gradYear?: string; issueYear?: string }>(
+  items: T[], 
+  field: 'startYear' | 'gradYear' | 'issueYear'
+): T[] => {
   return [...items].sort((a, b) => {
     const yearA = parseInt((a as any)[field]) || 0;
     const yearB = parseInt((b as any)[field]) || 0;
@@ -29,190 +32,144 @@ const sortByYear = <T extends { startYear?: string; gradYear?: string }>(items: 
   });
 };
 
-// Social links display helper
-const SocialLinks = ({ links, rtl, className = '' }: { links: CVData['personal']['socialLinks']; rtl: boolean; className?: string }) => {
-  const activeLinks = Object.entries(links).filter(([_, v]) => v);
-  if (activeLinks.length === 0) return null;
-  return (
-    <div className={`flex flex-wrap gap-2 ${rtl ? 'flex-row-reverse' : ''} ${className}`}>
-      {activeLinks.map(([key, value]) => (
-        <span key={key} className="text-xs">🔗 {value}</span>
-      ))}
-    </div>
-  );
-};
-
-// TEMPLATE 1: CLASSIC
-export function ClassicTemplate({ data: d, rtl, t }: TemplateProps) {
+// TEMPLATE 1: MORGAN - Bold header with elegant sidebar
+export function MorganTemplate({ data: d, rtl, t }: TemplateProps) {
   const mos = t('months') as string[];
   const pres = t('present') as string;
   const sortedExp = sortByYear(d.experience, 'startYear');
   const sortedEdu = sortByYear(d.education, 'gradYear');
-  
+  const sortedCert = sortByYear(d.certifications, 'issueYear');
+
   return (
-    <div className={`bg-white p-8 min-h-full ${rtl ? 'text-right' : 'text-left'}`} style={{fontFamily: rtl ? 'Tajawal' : 'Georgia'}}>
-      <header className="border-b-2 border-gray-800 pb-4 mb-6">
-        <div className={`flex gap-4 items-start ${rtl ? 'flex-row-reverse' : ''}`}>
-          {d.personal.photo && <img src={d.personal.photo} className="w-20 h-20 rounded-full object-cover flex-shrink-0"/>}
+    <div className={`bg-white min-h-full ${rtl ? 'text-right' : 'text-left'}`} style={{ fontFamily: 'Georgia, serif' }}>
+      {/* Header */}
+      <div className="bg-black text-white p-8">
+        <div className={`flex items-center gap-6 ${rtl ? 'flex-row-reverse' : ''}`}>
+          {d.personal.photo && (
+            <img src={d.personal.photo} className="w-24 h-24 object-cover border-4 border-white" alt="" />
+          )}
           <div className="flex-1">
-            <h1 className="text-3xl font-bold">{d.personal.fullName || 'Your Name'}</h1>
-            <p className="text-xl text-gray-600">{d.personal.jobTitle}</p>
-            <div className={`flex flex-wrap gap-4 mt-2 text-sm text-gray-500 ${rtl ? 'flex-row-reverse' : ''}`}>
-              {d.personal.email && <span>✉ {d.personal.email}</span>}
-              {d.personal.phone && <span>📱 {d.personal.phone}</span>}
-              {d.personal.location && <span>📍 {d.personal.location}</span>}
-            </div>
-            <SocialLinks links={d.personal.socialLinks} rtl={rtl} className="mt-2 text-gray-500" />
+            <h1 className="text-3xl font-bold tracking-wide uppercase">{d.personal.fullName || 'YOUR NAME'}</h1>
+            <p className="text-gray-300 text-lg uppercase tracking-widest mt-1">{d.personal.jobTitle}</p>
+          </div>
+          <div className={`text-sm space-y-1 ${rtl ? 'text-left' : 'text-right'}`}>
+            {d.personal.phone && <p>📱 {d.personal.phone}</p>}
+            {d.personal.email && <p>✉️ {d.personal.email}</p>}
+            {d.personal.location && <p>📍 {d.personal.location}</p>}
           </div>
         </div>
-      </header>
-      
-      {d.summary && (
-        <section className="mb-6">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-2">Summary</h2>
-          <p className="text-gray-700 whitespace-pre-line text-justify">{d.summary}</p>
-        </section>
-      )}
-      
-      {sortedExp.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-2">Experience</h2>
-          {sortedExp.map((e, i) => (
-            <div key={i} className="mb-4">
-              <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
-                <div>
-                  <h3 className="font-bold">{e.jobTitle}</h3>
-                  <p className="text-gray-600">{e.company}</p>
+      </div>
+
+      <div className={`flex ${rtl ? 'flex-row-reverse' : ''}`}>
+        {/* Sidebar */}
+        <div className="w-1/3 bg-gray-50 p-6 min-h-full border-r-4 border-purple-600">
+          {/* Languages */}
+          {d.languages.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-bold uppercase text-sm tracking-wider mb-3 border-b-2 border-gray-300 pb-1">Language</h3>
+              {d.languages.map((l, i) => (
+                <div key={i} className={`flex justify-between text-sm mb-2 ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <span>{l.name}</span>
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(n => (
+                      <div key={n} className={`w-3 h-1 rounded ${n <= (l.level.toLowerCase().includes('native') ? 5 : l.level.toLowerCase().includes('fluent') ? 4 : 3) ? 'bg-gray-800' : 'bg-gray-300'}`} />
+                    ))}
+                  </div>
                 </div>
-                <span className="text-sm text-gray-500 flex-shrink-0">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</span>
-              </div>
-              {e.description && <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">{e.description}</p>}
+              ))}
             </div>
-          ))}
-        </section>
-      )}
-      
-      {sortedEdu.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-2">Education</h2>
-          {sortedEdu.map((e, i) => (
-            <div key={i} className="mb-3">
-              <h3 className="font-bold">{e.degree}</h3>
-              <p className="text-gray-600">{e.institution}{e.gpa && ` • GPA: ${e.gpa}`}</p>
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {d.skills.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-2">Skills</h2>
-          <div className={`flex flex-wrap gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-            {d.skills.map((s, i) => <span key={i} className="px-3 py-1 bg-gray-100 rounded text-sm">{s}</span>)}
-          </div>
-        </section>
-      )}
-      
-      {d.languages.length > 0 && (
-        <section>
-          <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-2">Languages</h2>
-          {d.languages.map((l, i) => (
-            <div key={i} className={`flex justify-between ${rtl ? 'flex-row-reverse' : ''}`}>
-              <span>{l.name}</span>
-              <span className="text-gray-500">{l.level}</span>
-            </div>
-          ))}
-        </section>
-      )}
-    </div>
-  );
-}
+          )}
 
-// TEMPLATE 2: MODERN
-export function ModernTemplate({ data: d, rtl, t }: TemplateProps) {
-  const mos = t('months') as string[];
-  const pres = t('present') as string;
-  const sortedExp = sortByYear(d.experience, 'startYear');
-  const sortedEdu = sortByYear(d.education, 'gradYear');
-  const activeLinks = Object.entries(d.personal.socialLinks).filter(([_, v]) => v);
-  
-  return (
-    <div className={`bg-white min-h-full ${rtl ? 'text-right' : 'text-left'}`}>
-      <header className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white p-8">
-        <div className={`flex gap-5 items-center ${rtl ? 'flex-row-reverse' : ''}`}>
-          {d.personal.photo && <img src={d.personal.photo} className="w-24 h-24 rounded-2xl object-cover border-2 border-white/30 flex-shrink-0"/>}
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold">{d.personal.fullName || 'Your Name'}</h1>
-            <p className="text-blue-100 text-lg">{d.personal.jobTitle}</p>
-            <div className={`flex flex-wrap gap-3 mt-3 text-sm ${rtl ? 'flex-row-reverse' : ''}`}>
-              {d.personal.email && <span className="bg-white/20 px-3 py-1 rounded-full">{d.personal.email}</span>}
-              {d.personal.phone && <span className="bg-white/20 px-3 py-1 rounded-full">{d.personal.phone}</span>}
+          {/* Skills */}
+          {d.skills.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-bold uppercase text-sm tracking-wider mb-3 border-b-2 border-gray-300 pb-1">Expertise</h3>
+              {d.skills.map((s, i) => (
+                <div key={i} className={`flex items-center gap-2 text-sm mb-2 ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <span className="text-purple-600">•</span>
+                  <span>{s}</span>
+                </div>
+              ))}
             </div>
+          )}
+
+          {/* Reference placeholder */}
+          <div>
+            <h3 className="font-bold uppercase text-sm tracking-wider mb-3 border-b-2 border-gray-300 pb-1">Reference</h3>
+            <p className="text-sm text-gray-600 italic">Available upon request</p>
           </div>
         </div>
-      </header>
-      
-      <div className="p-8 grid grid-cols-3 gap-8">
-        <div className="col-span-2 space-y-6">
+
+        {/* Main Content */}
+        <div className="flex-1 p-6">
+          {/* About Me */}
           {d.summary && (
-            <section>
-              <h2 className="text-sm font-bold text-blue-600 uppercase mb-2">About</h2>
-              <p className="text-gray-600 text-justify">{d.summary}</p>
+            <section className="mb-6">
+              <h2 className="font-bold uppercase text-lg tracking-wider mb-3 border-b-2 border-gray-300 pb-1">About Me</h2>
+              <p className="text-gray-700 text-sm leading-relaxed text-justify">{d.summary}</p>
             </section>
           )}
-          
+
+          {/* Experience */}
           {sortedExp.length > 0 && (
-            <section>
-              <h2 className="text-sm font-bold text-blue-600 uppercase mb-3">Experience</h2>
+            <section className="mb-6">
+              <h2 className="font-bold uppercase text-lg tracking-wider mb-3 border-b-2 border-gray-300 pb-1">Experience</h2>
               {sortedExp.map((e, i) => (
-                <div key={i} className={`mb-4 ${rtl ? 'pr-4 border-r-2' : 'pl-4 border-l-2'} border-blue-200`}>
-                  <h3 className="font-bold">{e.jobTitle}</h3>
-                  <p className="text-blue-600 text-sm">{e.company}</p>
-                  <p className="text-gray-400 text-xs">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</p>
-                  {e.description && <p className="text-gray-600 text-sm mt-2 whitespace-pre-line">{e.description}</p>}
+                <div key={i} className="mb-4">
+                  <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                    <div>
+                      <p className="font-bold">{e.company}</p>
+                      <p className="text-sm text-gray-600 italic">{e.jobTitle}</p>
+                    </div>
+                    <span className="text-sm font-semibold whitespace-nowrap">
+                      {fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}
+                    </span>
+                  </div>
+                  {e.description && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">{e.description}</p>}
                 </div>
               ))}
             </section>
           )}
-          
+
+          {/* Education */}
           {sortedEdu.length > 0 && (
-            <section>
-              <h2 className="text-sm font-bold text-blue-600 uppercase mb-3">Education</h2>
+            <section className="mb-6">
+              <h2 className="font-bold uppercase text-lg tracking-wider mb-3 border-b-2 border-gray-300 pb-1">Education</h2>
               {sortedEdu.map((e, i) => (
                 <div key={i} className="mb-3">
-                  <h3 className="font-bold">{e.degree}</h3>
-                  <p className="text-blue-600 text-sm">{e.institution}</p>
+                  <div className={`flex gap-4 ${rtl ? 'flex-row-reverse' : ''}`}>
+                    <span className="font-bold text-sm">{e.gradYear}</span>
+                    <div>
+                      <p className="text-sm text-gray-600 italic">{e.institution}</p>
+                      <p className="font-semibold">{e.degree}</p>
+                      {e.gpa && <p className="text-xs text-gray-500">GPA: {e.gpa}</p>}
+                    </div>
+                  </div>
                 </div>
               ))}
             </section>
           )}
-        </div>
-        
-        <div className="space-y-6">
-          {(d.personal.location || activeLinks.length > 0) && (
-            <section className="bg-gray-50 rounded-xl p-4">
-              <h2 className="text-sm font-bold text-blue-600 uppercase mb-2">Contact</h2>
-              {d.personal.location && <p className="text-gray-600 text-sm">📍 {d.personal.location}</p>}
-              {activeLinks.map(([key, value]) => <p key={key} className="text-gray-600 text-sm break-all">🔗 {value}</p>)}
-            </section>
-          )}
-          
-          {d.skills.length > 0 && (
+
+          {/* Certifications */}
+          {sortedCert.length > 0 && (
             <section>
-              <h2 className="text-sm font-bold text-blue-600 uppercase mb-2">Skills</h2>
-              <div className={`flex flex-wrap gap-1 ${rtl ? 'flex-row-reverse' : ''}`}>
-                {d.skills.map((s, i) => <span key={i} className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">{s}</span>)}
-              </div>
-            </section>
-          )}
-          
-          {d.languages.length > 0 && (
-            <section>
-              <h2 className="text-sm font-bold text-blue-600 uppercase mb-2">Languages</h2>
-              {d.languages.map((l, i) => (
-                <div key={i} className={`flex justify-between text-sm ${rtl ? 'flex-row-reverse' : ''}`}>
-                  <span>{l.name}</span>
-                  <span className="text-gray-400">{l.level}</span>
+              <h2 className="font-bold uppercase text-lg tracking-wider mb-3 border-b-2 border-gray-300 pb-1">Certifications</h2>
+              {sortedCert.map((c, i) => (
+                <div key={i} className="mb-3">
+                  <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                    <div>
+                      <p className="font-semibold text-sm">{c.name}</p>
+                      <p className="text-xs text-gray-600">{c.issuer}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500">{fmtDate(c.issueMonth, c.issueYear, false, '', mos)}</span>
+                      {c.mode && (
+                        <span className={`ml-2 text-xs px-2 py-0.5 rounded ${c.mode === 'online' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                          {c.mode === 'online' ? '🌐 Online' : '🏢 In-Person'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
             </section>
@@ -223,533 +180,406 @@ export function ModernTemplate({ data: d, rtl, t }: TemplateProps) {
   );
 }
 
-// TEMPLATE 3: EXECUTIVE
-export function ExecutiveTemplate({ data: d, rtl, t }: TemplateProps) {
+// TEMPLATE 2: CATRINE - Photo-focused professional layout
+export function CatrineTemplate({ data: d, rtl, t }: TemplateProps) {
   const mos = t('months') as string[];
   const pres = t('present') as string;
   const sortedExp = sortByYear(d.experience, 'startYear');
   const sortedEdu = sortByYear(d.education, 'gradYear');
-  const activeLinks = Object.entries(d.personal.socialLinks).filter(([_, v]) => v);
-  
-  return (
-    <div className={`bg-white min-h-full flex ${rtl ? 'flex-row-reverse' : ''}`}>
-      <aside className="w-1/3 bg-slate-900 text-white p-6">
-        <div className="text-center mb-6">
-          {d.personal.photo ? (
-            <img src={d.personal.photo} className="w-24 h-24 rounded-full mx-auto border-4 border-amber-500 object-cover"/>
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-slate-700 mx-auto flex items-center justify-center text-4xl font-bold text-amber-500">
-              {d.personal.fullName?.charAt(0) || '?'}
-            </div>
-          )}
-          <h1 className="font-bold text-xl mt-4">{d.personal.fullName || 'Your Name'}</h1>
-          <p className="text-amber-400 text-sm">{d.personal.jobTitle}</p>
-        </div>
-        
-        <div className="space-y-2 text-sm mb-6">
-          {d.personal.email && (
-            <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-              <span className="text-amber-500">✉</span>
-              <span className="text-slate-300 break-all text-xs">{d.personal.email}</span>
-            </div>
-          )}
-          {d.personal.phone && (
-            <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-              <span className="text-amber-500">☎</span>
-              <span className="text-slate-300">{d.personal.phone}</span>
-            </div>
-          )}
-          {d.personal.location && (
-            <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-              <span className="text-amber-500">📍</span>
-              <span className="text-slate-300">{d.personal.location}</span>
-            </div>
-          )}
-          {activeLinks.map(([key, value]) => (
-            <div key={key} className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-              <span className="text-amber-500">🔗</span>
-              <span className="text-slate-300 break-all text-xs">{value}</span>
-            </div>
-          ))}
-        </div>
-        
-        {d.skills.length > 0 && (
-          <div className="mb-6">
-            <h3 className="text-amber-500 font-bold uppercase text-xs mb-3">Expertise</h3>
-            {d.skills.slice(0, 10).map((s, i) => (
-              <div key={i} className={`flex items-center gap-2 text-slate-300 text-sm mb-1 ${rtl ? 'flex-row-reverse' : ''}`}>
-                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full flex-shrink-0"></span>
-                <span>{s}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {d.languages.length > 0 && (
-          <div>
-            <h3 className="text-amber-500 font-bold uppercase text-xs mb-3">Languages</h3>
-            {d.languages.map((l, i) => (
-              <div key={i} className={`flex justify-between text-sm mb-1 ${rtl ? 'flex-row-reverse' : ''}`}>
-                <span className="text-slate-300">{l.name}</span>
-                <span className="text-slate-500">{l.level}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </aside>
-      
-      <main className={`flex-1 p-8 ${rtl ? 'text-right' : 'text-left'}`}>
-        {d.summary && (
-          <section className="mb-6">
-            <h2 className="font-bold uppercase border-b-2 border-amber-500 pb-1 mb-3 text-sm">Profile</h2>
-            <p className="text-slate-600 text-justify">{d.summary}</p>
-          </section>
-        )}
-        
-        {sortedExp.length > 0 && (
-          <section className="mb-6">
-            <h2 className="font-bold uppercase border-b-2 border-amber-500 pb-1 mb-3 text-sm">Experience</h2>
-            {sortedExp.map((e, i) => (
-              <div key={i} className="mb-5">
-                <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="font-bold">{e.jobTitle}</h3>
-                  <span className="text-xs text-slate-400 flex-shrink-0">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</span>
-                </div>
-                <p className="text-amber-600 text-sm">{e.company}</p>
-                {e.description && <p className="text-slate-500 text-sm mt-2 whitespace-pre-line">{e.description}</p>}
-              </div>
-            ))}
-          </section>
-        )}
-        
-        {sortedEdu.length > 0 && (
-          <section>
-            <h2 className="font-bold uppercase border-b-2 border-amber-500 pb-1 mb-3 text-sm">Education</h2>
-            {sortedEdu.map((e, i) => (
-              <div key={i} className="mb-3">
-                <h3 className="font-bold">{e.degree}</h3>
-                <p className="text-amber-600 text-sm">{e.institution}{e.gradYear && ` • ${e.gradYear}`}</p>
-              </div>
-            ))}
-          </section>
-        )}
-      </main>
-    </div>
-  );
-}
+  const sortedCert = sortByYear(d.certifications, 'issueYear');
 
-// TEMPLATE 4: CREATIVE
-export function CreativeTemplate({ data: d, rtl, t }: TemplateProps) {
-  const mos = t('months') as string[];
-  const pres = t('present') as string;
-  const sortedExp = sortByYear(d.experience, 'startYear');
-  const sortedEdu = sortByYear(d.education, 'gradYear');
-  
   return (
-    <div className={`bg-gradient-to-br from-violet-50 via-white to-pink-50 min-h-full flex ${rtl ? 'flex-row-reverse' : ''}`}>
-      <aside className="w-1/3 bg-gradient-to-b from-violet-600 to-pink-600 text-white p-6 relative overflow-hidden">
-        <div className="absolute top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
-        <div className="relative z-10">
-          <div className="text-center mb-6">
+    <div className={`bg-white min-h-full ${rtl ? 'text-right' : 'text-left'}`} style={{ fontFamily: 'Calibri, sans-serif' }}>
+      <div className={`flex ${rtl ? 'flex-row-reverse' : ''}`}>
+        {/* Left Sidebar - Olive/Green */}
+        <div className="w-1/3 bg-[#8B9A7D] text-white p-6 min-h-full">
+          {/* Photo */}
+          <div className="mb-6">
             {d.personal.photo ? (
-              <img src={d.personal.photo} className="w-28 h-28 rounded-2xl mx-auto border-2 border-white/30 object-cover"/>
+              <img src={d.personal.photo} className="w-full aspect-square object-cover border-4 border-white/30" alt="" />
             ) : (
-              <div className="w-28 h-28 rounded-2xl bg-white/20 mx-auto flex items-center justify-center text-4xl font-bold">
+              <div className="w-full aspect-square bg-white/20 flex items-center justify-center text-6xl">
                 {d.personal.fullName?.charAt(0) || '?'}
               </div>
             )}
           </div>
-          
-          <div className="space-y-2 text-sm mb-8">
-            {d.personal.email && (
-              <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-                <span className="w-6 h-6 bg-white/20 rounded flex items-center justify-center text-xs flex-shrink-0">✉</span>
-                <span className="break-all text-xs">{d.personal.email}</span>
-              </div>
-            )}
-            {d.personal.phone && (
-              <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-                <span className="w-6 h-6 bg-white/20 rounded flex items-center justify-center text-xs flex-shrink-0">☎</span>
-                <span>{d.personal.phone}</span>
-              </div>
-            )}
-          </div>
-          
-          {d.skills.length > 0 && (
+
+          {/* Profile */}
+          {d.summary && (
             <div className="mb-6">
-              <h3 className="text-white/70 font-bold uppercase text-xs mb-3">Skills</h3>
-              <div className={`flex flex-wrap gap-1 ${rtl ? 'flex-row-reverse' : ''}`}>
-                {d.skills.slice(0, 8).map((s, i) => <span key={i} className="px-2 py-1 bg-white/20 rounded-full text-xs">{s}</span>)}
-              </div>
+              <h3 className="font-bold uppercase text-sm tracking-wider mb-3 border-b border-white/30 pb-1">Profile</h3>
+              <p className="text-sm leading-relaxed opacity-90 text-justify">{d.summary}</p>
             </div>
           )}
-          
-          {d.languages.length > 0 && (
-            <div>
-              <h3 className="text-white/70 font-bold uppercase text-xs mb-3">Languages</h3>
-              {d.languages.map((l, i) => (
-                <div key={i} className="mb-2">
-                  <span className="text-sm">{l.name}</span>
-                  <div className="h-1.5 bg-white/20 rounded-full mt-1">
-                    <div className="h-full bg-white/70 rounded-full" style={{width: l.level.toLowerCase().includes('native') ? '100%' : l.level.toLowerCase().includes('fluent') ? '85%' : '60%'}}></div>
-                  </div>
+
+          {/* Skills */}
+          {d.skills.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-bold uppercase text-sm tracking-wider mb-3 border-b border-white/30 pb-1">Skills</h3>
+              {d.skills.map((s, i) => (
+                <div key={i} className={`flex items-center gap-2 text-sm mb-1 ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <span>•</span>
+                  <span className="opacity-90">{s}</span>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      </aside>
-      
-      <main className={`flex-1 p-8 ${rtl ? 'text-right' : 'text-left'}`}>
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">{d.personal.fullName || 'Your Name'}</h1>
-          <p className="text-xl text-violet-600">{d.personal.jobTitle}</p>
-        </header>
-        
-        {d.summary && (
-          <section className="mb-8">
-            <h2 className="text-sm font-bold text-violet-600 uppercase mb-2">About Me</h2>
-            <p className="text-gray-600 text-justify">{d.summary}</p>
-          </section>
-        )}
-        
-        {sortedExp.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-sm font-bold text-violet-600 uppercase mb-3">Experience</h2>
-            {sortedExp.map((e, i) => (
-              <div key={i} className="mb-4">
-                <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-                  <span className="text-pink-500">→</span>
-                  <h3 className="font-bold">{e.jobTitle}</h3>
-                </div>
-                <p className="text-violet-600 text-sm ml-5">{e.company}</p>
-                <p className="text-gray-400 text-xs ml-5">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</p>
-              </div>
-            ))}
-          </section>
-        )}
-        
-        {sortedEdu.length > 0 && (
-          <section>
-            <h2 className="text-sm font-bold text-violet-600 uppercase mb-3">Education</h2>
-            {sortedEdu.map((e, i) => (
-              <div key={i} className="bg-violet-50 rounded-xl p-4 mb-3">
-                <h3 className="font-bold">{e.degree}</h3>
-                <p className="text-violet-600 text-sm">{e.institution}</p>
-              </div>
-            ))}
-          </section>
-        )}
-      </main>
-    </div>
-  );
-}
 
-// TEMPLATE 5: MINIMAL
-export function MinimalTemplate({ data: d, rtl, t }: TemplateProps) {
-  const mos = t('months') as string[];
-  const pres = t('present') as string;
-  const sortedExp = sortByYear(d.experience, 'startYear');
-  const sortedEdu = sortByYear(d.education, 'gradYear');
-  
-  return (
-    <div className={`bg-white p-10 min-h-full ${rtl ? 'text-right' : 'text-left'}`}>
-      <header className="mb-10">
-        <h1 className="text-4xl font-light text-gray-900">{d.personal.fullName || 'Your Name'}</h1>
-        <p className="text-lg text-gray-500">{d.personal.jobTitle}</p>
-        <div className={`flex gap-6 mt-4 text-sm text-gray-400 ${rtl ? 'flex-row-reverse' : ''}`}>
-          {d.personal.email && <span>{d.personal.email}</span>}
-          {d.personal.phone && <span>{d.personal.phone}</span>}
+          {/* Languages */}
+          {d.languages.length > 0 && (
+            <div>
+              <h3 className="font-bold uppercase text-sm tracking-wider mb-3 border-b border-white/30 pb-1">Languages</h3>
+              {d.languages.map((l, i) => (
+                <div key={i} className="text-sm mb-1 opacity-90">{l.name} - {l.level}</div>
+              ))}
+            </div>
+          )}
         </div>
-      </header>
-      
-      {d.summary && (
-        <section className="mb-10">
-          <p className="text-gray-600 leading-relaxed text-lg text-justify">{d.summary}</p>
-        </section>
-      )}
-      
-      {sortedExp.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-6">Experience</h2>
-          {sortedExp.map((e, i) => (
-            <div key={i} className="mb-6">
-              <div className={`flex justify-between ${rtl ? 'flex-row-reverse' : ''}`}>
-                <h3 className="font-medium text-gray-900">{e.jobTitle}</h3>
-                <span className="text-sm text-gray-400">{fmtDate(e.startMonth, e.startYear, false, '', mos)} — {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</span>
-              </div>
-              <p className="text-gray-500">{e.company}</p>
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {sortedEdu.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-6">Education</h2>
-          {sortedEdu.map((e, i) => (
-            <div key={i} className="mb-4">
-              <h3 className="font-medium text-gray-900">{e.degree}</h3>
-              <p className="text-gray-500">{e.institution}</p>
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {d.skills.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-6">Skills</h2>
-          <p className="text-gray-600">{d.skills.join(' · ')}</p>
-        </section>
-      )}
-      
-      {d.languages.length > 0 && (
-        <section>
-          <h2 className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-6">Languages</h2>
-          <p className="text-gray-600">{d.languages.map(l => `${l.name} (${l.level})`).join(' · ')}</p>
-        </section>
-      )}
-    </div>
-  );
-}
 
-// TEMPLATE 6: TECH
-export function TechTemplate({ data: d, rtl, t }: TemplateProps) {
-  const mos = t('months') as string[];
-  const pres = t('present') as string;
-  const sortedExp = sortByYear(d.experience, 'startYear');
-  const sortedEdu = sortByYear(d.education, 'gradYear');
-  const activeLinks = Object.entries(d.personal.socialLinks).filter(([_, v]) => v);
-  
-  return (
-    <div className={`bg-gray-900 text-white p-8 min-h-full ${rtl ? 'text-right' : 'text-left'}`}>
-      <header className="mb-8">
-        <div className={`flex items-center gap-6 ${rtl ? 'flex-row-reverse' : ''}`}>
-          {d.personal.photo && <img src={d.personal.photo} className="w-24 h-24 rounded-xl object-cover border-2 border-cyan-500 flex-shrink-0"/>}
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-cyan-400">{d.personal.fullName || 'Your Name'}</h1>
-            <p className="text-gray-400 text-lg">{d.personal.jobTitle}</p>
-            <div className={`flex flex-wrap gap-4 mt-2 text-sm text-gray-500 ${rtl ? 'flex-row-reverse' : ''}`}>
-              {d.personal.email && <span>{d.personal.email}</span>}
-              {activeLinks.map(([key, value]) => <span key={key}>{value}</span>)}
-            </div>
+        {/* Right Main Content */}
+        <div className="flex-1">
+          {/* Header */}
+          <div className="bg-[#F5F5F0] p-8">
+            <h1 className="text-4xl font-light text-gray-800">{d.personal.fullName || 'Your Name'}</h1>
+            <p className="text-lg text-[#8B9A7D] uppercase tracking-widest mt-1">{d.personal.jobTitle}</p>
           </div>
-        </div>
-      </header>
-      
-      {d.skills.length > 0 && (
-        <section className="mb-8">
-          <div className={`flex flex-wrap gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-            {d.skills.map((s, i) => <span key={i} className="px-3 py-1.5 bg-cyan-900/50 text-cyan-400 rounded border border-cyan-800 text-sm">{s}</span>)}
-          </div>
-        </section>
-      )}
-      
-      {d.summary && (
-        <section className={`mb-8 ${rtl ? 'border-r-2 pr-4' : 'border-l-2 pl-4'} border-cyan-500`}>
-          <p className="text-gray-300 text-justify">{d.summary}</p>
-        </section>
-      )}
-      
-      {sortedExp.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-cyan-400 uppercase text-sm mb-4">Experience</h2>
-          {sortedExp.map((e, i) => (
-            <div key={i} className="mb-5 bg-gray-800 rounded-lg p-4">
-              <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
-                <h3 className="font-bold text-white">{e.jobTitle}</h3>
-                <span className="text-gray-500 text-xs bg-gray-700 px-2 py-1 rounded flex-shrink-0">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</span>
-              </div>
-              <p className="text-cyan-500 text-sm">{e.company}</p>
-              {e.description && <p className="text-gray-400 text-sm mt-2 whitespace-pre-line">{e.description}</p>}
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {sortedEdu.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-cyan-400 uppercase text-sm mb-4">Education</h2>
-          {sortedEdu.map((e, i) => (
-            <div key={i} className="mb-3">
-              <h3 className="font-bold text-white">{e.degree}</h3>
-              <p className="text-gray-400">{e.institution}</p>
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {d.languages.length > 0 && (
-        <section>
-          <h2 className="text-cyan-400 uppercase text-sm mb-4">Languages</h2>
-          <div className={`flex gap-4 ${rtl ? 'flex-row-reverse' : ''}`}>
-            {d.languages.map((l, i) => <span key={i} className="text-gray-400">{l.name} <span className="text-gray-600">({l.level})</span></span>)}
-          </div>
-        </section>
-      )}
-    </div>
-  );
-}
 
-// TEMPLATE 7: ACADEMIC
-export function AcademicTemplate({ data: d, rtl, t }: TemplateProps) {
-  const mos = t('months') as string[];
-  const pres = t('present') as string;
-  const sortedExp = sortByYear(d.experience, 'startYear');
-  const sortedEdu = sortByYear(d.education, 'gradYear');
-  
-  return (
-    <div className={`bg-white p-10 min-h-full ${rtl ? 'text-right' : 'text-left'}`} style={{fontFamily: 'Times New Roman, serif'}}>
-      <header className="text-center border-b-2 border-indigo-900 pb-6 mb-8">
-        <h1 className="text-3xl font-bold text-indigo-900">{d.personal.fullName || 'Your Name'}</h1>
-        <p className="text-lg text-indigo-700 italic">{d.personal.jobTitle}</p>
-        <div className="flex justify-center gap-6 mt-4 text-sm text-gray-600">
-          {d.personal.email && <span>{d.personal.email}</span>}
-          {d.personal.phone && <span>{d.personal.phone}</span>}
-        </div>
-      </header>
-      
-      {d.summary && (
-        <section className="mb-8">
-          <h2 className="font-bold text-indigo-900 uppercase mb-3">Research Interests</h2>
-          <p className="text-gray-700 text-justify">{d.summary}</p>
-        </section>
-      )}
-      
-      {sortedEdu.length > 0 && (
-        <section className="mb-8">
-          <h2 className="font-bold text-indigo-900 uppercase mb-3">Education</h2>
-          {sortedEdu.map((e, i) => (
-            <div key={i} className="mb-4">
-              <h3 className="font-bold">{e.degree}</h3>
-              <p className="text-gray-600">{e.institution}{e.gradYear && `, ${e.gradYear}`}{e.gpa && ` • GPA: ${e.gpa}`}</p>
-              {e.thesisTitle && <p className="text-gray-500 italic">Thesis: {e.thesisTitle}</p>}
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {sortedExp.length > 0 && (
-        <section className="mb-8">
-          <h2 className="font-bold text-indigo-900 uppercase mb-3">Experience</h2>
-          {sortedExp.map((e, i) => (
-            <div key={i} className="mb-4">
-              <div className={`flex justify-between ${rtl ? 'flex-row-reverse' : ''}`}>
-                <h3 className="font-bold">{e.jobTitle}</h3>
-                <span className="text-gray-500 text-sm">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</span>
-              </div>
-              <p className="text-gray-600">{e.company}</p>
-              {e.description && <p className="text-gray-500 mt-2 whitespace-pre-line">{e.description}</p>}
-            </div>
-          ))}
-        </section>
-      )}
-      
-      {d.skills.length > 0 && (
-        <section className="mb-8">
-          <h2 className="font-bold text-indigo-900 uppercase mb-3">Skills</h2>
-          <p className="text-gray-600">{d.skills.join(' • ')}</p>
-        </section>
-      )}
-      
-      {d.languages.length > 0 && (
-        <section>
-          <h2 className="font-bold text-indigo-900 uppercase mb-3">Languages</h2>
-          <p className="text-gray-600">{d.languages.map(l => `${l.name} (${l.level})`).join(' • ')}</p>
-        </section>
-      )}
-    </div>
-  );
-}
+          {/* Contact Bar */}
+          <div className={`bg-gray-100 px-8 py-3 flex gap-6 text-xs text-gray-600 ${rtl ? 'flex-row-reverse' : ''}`}>
+            {d.personal.phone && <span>📱 {d.personal.phone}</span>}
+            {d.personal.email && <span>✉️ {d.personal.email}</span>}
+            {d.personal.location && <span>📍 {d.personal.location}</span>}
+          </div>
 
-// TEMPLATE 8: PROFESSIONAL
-export function ProfessionalTemplate({ data: d, rtl, t }: TemplateProps) {
-  const mos = t('months') as string[];
-  const pres = t('present') as string;
-  const sortedExp = sortByYear(d.experience, 'startYear');
-  const sortedEdu = sortByYear(d.education, 'gradYear');
-  
-  return (
-    <div className={`bg-white min-h-full ${rtl ? 'text-right' : 'text-left'}`}>
-      <header className="bg-gradient-to-r from-slate-800 to-slate-700 text-white p-8">
-        <div className={`flex items-center gap-6 ${rtl ? 'flex-row-reverse' : ''}`}>
-          {d.personal.photo && <img src={d.personal.photo} className="w-24 h-24 rounded-full object-cover border-4 border-white/20 flex-shrink-0"/>}
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold">{d.personal.fullName || 'Your Name'}</h1>
-            <p className="text-slate-300 text-lg">{d.personal.jobTitle}</p>
-          </div>
-          <div className={`text-sm text-slate-300 ${rtl ? 'text-left' : 'text-right'}`}>
-            {d.personal.email && <p>{d.personal.email}</p>}
-            {d.personal.phone && <p>{d.personal.phone}</p>}
-            {d.personal.location && <p>{d.personal.location}</p>}
-          </div>
-        </div>
-      </header>
-      
-      <div className="p-8">
-        {d.summary && (
-          <section className={`mb-8 bg-slate-50 rounded-lg p-5 ${rtl ? 'border-r-4' : 'border-l-4'} border-slate-800`}>
-            <p className="text-gray-700 text-justify">{d.summary}</p>
-          </section>
-        )}
-        
-        <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 space-y-8">
+          <div className="p-8">
+            {/* Experience */}
             {sortedExp.length > 0 && (
-              <section>
-                <h2 className="font-bold text-slate-800 uppercase border-b-2 border-slate-200 pb-2 mb-4">Experience</h2>
+              <section className="mb-8">
+                <h2 className="font-bold uppercase tracking-wider text-lg mb-4 text-gray-800">Work Experience</h2>
                 {sortedExp.map((e, i) => (
                   <div key={i} className="mb-5">
                     <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
                       <div>
-                        <h3 className="font-bold">{e.jobTitle}</h3>
-                        <p className="text-slate-600">{e.company}</p>
+                        <p className="font-bold text-gray-800">{e.jobTitle}</p>
+                        <p className="text-[#8B9A7D] text-sm">{e.company} | {fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</p>
                       </div>
-                      <span className="text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded flex-shrink-0">{fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}</span>
                     </div>
-                    {e.description && <p className="text-gray-600 text-sm mt-2 whitespace-pre-line">{e.description}</p>}
+                    {e.description && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">{e.description}</p>}
                   </div>
                 ))}
               </section>
             )}
-            
+
+            {/* Education */}
             {sortedEdu.length > 0 && (
-              <section>
-                <h2 className="font-bold text-slate-800 uppercase border-b-2 border-slate-200 pb-2 mb-4">Education</h2>
+              <section className="mb-8">
+                <h2 className="font-bold uppercase tracking-wider text-lg mb-4 text-gray-800">Educational History</h2>
                 {sortedEdu.map((e, i) => (
                   <div key={i} className="mb-4">
-                    <h3 className="font-bold">{e.degree}</h3>
-                    <p className="text-slate-600">{e.institution}</p>
-                    {(e.gradYear || e.gpa) && <p className="text-sm text-slate-500">{e.gradYear && fmtDate(e.gradMonth, e.gradYear, false, '', mos)}{e.gpa && ` • GPA: ${e.gpa}`}</p>}
+                    <p className="font-bold text-gray-800">{e.institution}</p>
+                    <p className="text-[#8B9A7D] text-sm">{e.degree} | {e.gradMonth && mos[parseInt(e.gradMonth) - 1]} {e.gradYear}</p>
+                    {e.gpa && <p className="text-xs text-gray-500">GPA: {e.gpa}</p>}
+                    {e.thesisTitle && <p className="text-xs text-gray-500 italic">Thesis: {e.thesisTitle}</p>}
                   </div>
                 ))}
               </section>
             )}
-          </div>
-          
-          <div className="space-y-6">
-            {d.skills.length > 0 && (
-              <section className="bg-slate-50 rounded-lg p-4">
-                <h2 className="font-bold text-slate-800 uppercase text-sm mb-3">Skills</h2>
-                <div className={`flex flex-wrap gap-1 ${rtl ? 'flex-row-reverse' : ''}`}>
-                  {d.skills.map((s, i) => <span key={i} className="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-xs">{s}</span>)}
-                </div>
-              </section>
-            )}
-            
-            {d.languages.length > 0 && (
-              <section className="bg-slate-50 rounded-lg p-4">
-                <h2 className="font-bold text-slate-800 uppercase text-sm mb-3">Languages</h2>
-                {d.languages.map((l, i) => (
-                  <div key={i} className={`flex justify-between text-sm mb-2 ${rtl ? 'flex-row-reverse' : ''}`}>
-                    <span className="text-gray-700">{l.name}</span>
-                    <span className="text-slate-500">{l.level}</span>
+
+            {/* Certifications */}
+            {sortedCert.length > 0 && (
+              <section>
+                <h2 className="font-bold uppercase tracking-wider text-lg mb-4 text-gray-800">Certifications</h2>
+                {sortedCert.map((c, i) => (
+                  <div key={i} className="mb-3">
+                    <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                      <div>
+                        <p className="font-semibold text-sm text-gray-800">{c.name}</p>
+                        <p className="text-xs text-[#8B9A7D]">{c.issuer}</p>
+                      </div>
+                      <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
+                        <span className="text-xs text-gray-500">{fmtDate(c.issueMonth, c.issueYear, false, '', mos)}</span>
+                        {c.mode && (
+                          <span className={`text-xs px-2 py-0.5 rounded ${c.mode === 'online' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
+                            {c.mode === 'online' ? 'Online' : 'In-Person'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </section>
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// TEMPLATE 3: SARAH - Clean two-column minimal design
+export function SarahTemplate({ data: d, rtl, t }: TemplateProps) {
+  const mos = t('months') as string[];
+  const pres = t('present') as string;
+  const sortedExp = sortByYear(d.experience, 'startYear');
+  const sortedEdu = sortByYear(d.education, 'gradYear');
+  const sortedCert = sortByYear(d.certifications, 'issueYear');
+
+  return (
+    <div className={`bg-white min-h-full p-8 ${rtl ? 'text-right' : 'text-left'}`} style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+      {/* Header */}
+      <header className="text-center mb-8 pb-6 border-b border-gray-200">
+        <h1 className="text-4xl font-light tracking-widest text-gray-800 uppercase">{d.personal.fullName || 'YOUR NAME'}</h1>
+        <p className="text-sm tracking-[0.3em] text-[#D4A574] uppercase mt-2">{d.personal.jobTitle}</p>
+      </header>
+
+      <div className={`flex gap-8 ${rtl ? 'flex-row-reverse' : ''}`}>
+        {/* Left Column */}
+        <div className="w-1/3 space-y-6">
+          {/* Contact */}
+          <section>
+            <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Contact</h3>
+            <div className="space-y-2 text-sm">
+              {d.personal.phone && <p className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}><span>📱</span> {d.personal.phone}</p>}
+              {d.personal.email && <p className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}><span>✉️</span> {d.personal.email}</p>}
+              {d.personal.location && <p className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}><span>📍</span> {d.personal.location}</p>}
+            </div>
+          </section>
+
+          {/* Education */}
+          {sortedEdu.length > 0 && (
+            <section>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Education</h3>
+              {sortedEdu.map((e, i) => (
+                <div key={i} className="mb-4">
+                  <p className="font-bold text-sm text-[#D4A574] uppercase">{e.institution}</p>
+                  <p className="font-bold text-sm">{e.degree}</p>
+                  <p className="text-xs text-gray-500">{e.gradYear}</p>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* Skills */}
+          {d.skills.length > 0 && (
+            <section>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Skills</h3>
+              {d.skills.map((s, i) => (
+                <p key={i} className="text-sm mb-1">{s}</p>
+              ))}
+            </section>
+          )}
+
+          {/* Languages */}
+          {d.languages.length > 0 && (
+            <section>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Languages</h3>
+              {d.languages.map((l, i) => (
+                <p key={i} className="text-sm mb-1">{l.name} - {l.level}</p>
+              ))}
+            </section>
+          )}
+        </div>
+
+        {/* Right Column */}
+        <div className="flex-1 space-y-6">
+          {/* Summary */}
+          {d.summary && (
+            <section>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Summary</h3>
+              <p className="text-sm text-gray-700 leading-relaxed text-justify">{d.summary}</p>
+            </section>
+          )}
+
+          {/* Experience */}
+          {sortedExp.length > 0 && (
+            <section>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Experience</h3>
+              {sortedExp.map((e, i) => (
+                <div key={i} className="mb-5">
+                  <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                    <div>
+                      <p className="font-bold text-sm uppercase text-[#D4A574]">{e.jobTitle}</p>
+                      <p className="text-sm italic text-gray-600">{e.company}</p>
+                    </div>
+                    <span className="text-xs text-gray-500 whitespace-nowrap">
+                      {fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}
+                    </span>
+                  </div>
+                  {e.description && <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">{e.description}</p>}
+                </div>
+              ))}
+            </section>
+          )}
+
+          {/* Certifications */}
+          {sortedCert.length > 0 && (
+            <section>
+              <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-3">Certifications</h3>
+              {sortedCert.map((c, i) => (
+                <div key={i} className="mb-3">
+                  <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                    <div>
+                      <p className="font-bold text-sm">{c.name}</p>
+                      <p className="text-xs text-gray-600">{c.issuer}</p>
+                    </div>
+                    <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
+                      <span className="text-xs text-gray-500">{fmtDate(c.issueMonth, c.issueYear, false, '', mos)}</span>
+                      {c.mode && (
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${c.mode === 'online' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
+                          {c.mode === 'online' ? '🌐' : '🏢'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// TEMPLATE 4: OLIVIA - Modern with color accents
+export function OliviaTemplate({ data: d, rtl, t }: TemplateProps) {
+  const mos = t('months') as string[];
+  const pres = t('present') as string;
+  const sortedExp = sortByYear(d.experience, 'startYear');
+  const sortedEdu = sortByYear(d.education, 'gradYear');
+  const sortedCert = sortByYear(d.certifications, 'issueYear');
+
+  return (
+    <div className={`bg-white min-h-full ${rtl ? 'text-right' : 'text-left'}`} style={{ fontFamily: 'Arial, sans-serif' }}>
+      {/* Header */}
+      <div className="bg-[#2D3748] text-white p-6">
+        <div className={`flex items-center gap-4 ${rtl ? 'flex-row-reverse' : ''}`}>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold">
+              <span className="text-white">{d.personal.fullName?.split(' ')[0] || 'FIRST'}</span>
+              {' '}
+              <span className="font-light">{d.personal.fullName?.split(' ').slice(1).join(' ') || 'LAST'}</span>
+            </h1>
+            <p className="text-[#E67E22] text-sm mt-1">{d.personal.jobTitle}</p>
+          </div>
+          <div className={`text-xs space-y-1 ${rtl ? 'text-left' : 'text-right'}`}>
+            {d.personal.location && <p>📍 {d.personal.location}</p>}
+            {d.personal.phone && <p>📱 {d.personal.phone}</p>}
+            {d.personal.email && <p>✉️ {d.personal.email}</p>}
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Banner */}
+      {d.summary && (
+        <div className="bg-gray-100 px-6 py-4 border-b">
+          <p className="text-sm text-gray-700 text-justify">{d.summary}</p>
+        </div>
+      )}
+
+      <div className="p-6">
+        {/* Experience */}
+        {sortedExp.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-[#E67E22] font-bold uppercase text-sm tracking-wider mb-4 pb-1 border-b-2 border-[#E67E22]">
+              Work Experience
+            </h2>
+            {sortedExp.map((e, i) => (
+              <div key={i} className="mb-5">
+                <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <div>
+                    <p className="font-bold text-gray-800">
+                      ▸ {e.jobTitle} <span className="font-normal text-gray-600">| {e.company}</span>
+                    </p>
+                  </div>
+                  <span className="text-xs text-[#E67E22] whitespace-nowrap font-medium">
+                    {fmtDate(e.startMonth, e.startYear, false, '', mos)} - {fmtDate(e.endMonth, e.endYear, e.current, pres, mos)}
+                  </span>
+                </div>
+                {e.description && <p className="text-sm text-gray-600 mt-2 ml-4 whitespace-pre-line">{e.description}</p>}
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* Skills Section - Two Columns */}
+        {d.skills.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-[#E67E22] font-bold uppercase text-sm tracking-wider mb-4 pb-1 border-b-2 border-[#E67E22]">
+              Skills
+            </h2>
+            <div className={`grid grid-cols-2 gap-x-8 gap-y-1 ${rtl ? 'text-right' : 'text-left'}`}>
+              {d.skills.map((s, i) => (
+                <p key={i} className={`text-sm flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <span className="text-[#E67E22]">•</span> {s}
+                </p>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Education */}
+        {sortedEdu.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-[#E67E22] font-bold uppercase text-sm tracking-wider mb-4 pb-1 border-b-2 border-[#E67E22]">
+              Education
+            </h2>
+            {sortedEdu.map((e, i) => (
+              <div key={i} className="mb-3">
+                <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <div>
+                    <p className="font-bold text-sm">{e.degree}</p>
+                    <p className="text-sm text-gray-600">{e.institution}</p>
+                  </div>
+                  <span className="text-xs text-[#E67E22] font-medium">{e.gradYear}</span>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* Certifications */}
+        {sortedCert.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-[#E67E22] font-bold uppercase text-sm tracking-wider mb-4 pb-1 border-b-2 border-[#E67E22]">
+              Certifications
+            </h2>
+            {sortedCert.map((c, i) => (
+              <div key={i} className="mb-3">
+                <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
+                  <div>
+                    <p className="font-bold text-sm">{c.name}</p>
+                    <p className="text-xs text-gray-600">{c.issuer}</p>
+                  </div>
+                  <div className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}>
+                    <span className="text-xs text-[#E67E22]">{fmtDate(c.issueMonth, c.issueYear, false, '', mos)}</span>
+                    {c.mode && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${c.mode === 'online' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                        {c.mode === 'online' ? '🌐 Online' : '🏢 In-Person'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* Languages & Other */}
+        {d.languages.length > 0 && (
+          <section>
+            <h2 className="text-[#E67E22] font-bold uppercase text-sm tracking-wider mb-4 pb-1 border-b-2 border-[#E67E22]">
+              Languages
+            </h2>
+            <div className={`flex gap-6 ${rtl ? 'flex-row-reverse' : ''}`}>
+              {d.languages.map((l, i) => (
+                <span key={i} className="text-sm">
+                  <strong>{l.name}</strong>: {l.level}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
@@ -757,14 +587,10 @@ export function ProfessionalTemplate({ data: d, rtl, t }: TemplateProps) {
 
 // TEMPLATE REGISTRY
 export const TEMPLATES = {
-  classic: { component: ClassicTemplate, icon: '📋', gradient: 'from-gray-700 to-gray-900' },
-  modern: { component: ModernTemplate, icon: '✨', gradient: 'from-blue-500 to-cyan-400' },
-  executive: { component: ExecutiveTemplate, icon: '👔', gradient: 'from-slate-800 to-amber-600' },
-  creative: { component: CreativeTemplate, icon: '🎨', gradient: 'from-violet-600 to-pink-500' },
-  minimal: { component: MinimalTemplate, icon: '○', gradient: 'from-gray-400 to-gray-600' },
-  tech: { component: TechTemplate, icon: '💻', gradient: 'from-gray-900 to-cyan-900' },
-  academic: { component: AcademicTemplate, icon: '📚', gradient: 'from-indigo-700 to-indigo-900' },
-  professional: { component: ProfessionalTemplate, icon: '💼', gradient: 'from-slate-700 to-slate-900' },
+  morgan: { component: MorganTemplate, icon: '📋', gradient: 'from-gray-800 to-purple-600' },
+  catrine: { component: CatrineTemplate, icon: '📸', gradient: 'from-[#8B9A7D] to-[#6B7A5D]' },
+  sarah: { component: SarahTemplate, icon: '✨', gradient: 'from-[#D4A574] to-[#B8956A]' },
+  olivia: { component: OliviaTemplate, icon: '🔥', gradient: 'from-[#2D3748] to-[#E67E22]' },
 } as const;
 
 export type TemplateKey = keyof typeof TEMPLATES;
