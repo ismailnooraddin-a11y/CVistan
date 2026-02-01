@@ -24,6 +24,7 @@ const initialCV: CVData = {
   summary: '',
   experience: [],
   education: [],
+  certifications: [],
   skills: [],
   languages: [],
 };
@@ -33,17 +34,21 @@ interface CVStore {
   language: LanguageCode;
   template: TemplateId;
   token: string | null;
+  user: { id: string; email: string; fullName: string } | null;
   setCV: (cv: CVData) => void;
   updatePersonal: (key: keyof CVData['personal'], value: any) => void;
   updateSocialLink: (key: string, value: string) => void;
   setSummary: (summary: string) => void;
   setExperience: (experience: CVData['experience']) => void;
   setEducation: (education: CVData['education']) => void;
+  setCertifications: (certifications: CVData['certifications']) => void;
   setSkills: (skills: string[]) => void;
   setLanguages: (languages: CVData['languages']) => void;
   setLanguage: (lang: LanguageCode) => void;
   setTemplate: (template: TemplateId) => void;
   setToken: (token: string | null) => void;
+  setUser: (user: { id: string; email: string; fullName: string } | null) => void;
+  logout: () => void;
   reset: () => void;
 }
 
@@ -52,8 +57,9 @@ export const useCVStore = create<CVStore>()(
     (set) => ({
       cv: initialCV,
       language: 'en',
-      template: 'modern',
+      template: 'morgan',
       token: null,
+      user: null,
       setCV: (cv) => set({ cv }),
       updatePersonal: (key, value) =>
         set((state) => ({
@@ -78,6 +84,8 @@ export const useCVStore = create<CVStore>()(
         set((state) => ({ cv: { ...state.cv, experience } })),
       setEducation: (education) =>
         set((state) => ({ cv: { ...state.cv, education } })),
+      setCertifications: (certifications) =>
+        set((state) => ({ cv: { ...state.cv, certifications } })),
       setSkills: (skills) =>
         set((state) => ({ cv: { ...state.cv, skills } })),
       setLanguages: (languages) =>
@@ -85,7 +93,9 @@ export const useCVStore = create<CVStore>()(
       setLanguage: (language) => set({ language }),
       setTemplate: (template) => set({ template }),
       setToken: (token) => set({ token }),
-      reset: () => set({ cv: initialCV, token: null }),
+      setUser: (user) => set({ user }),
+      logout: () => set({ token: null, user: null }),
+      reset: () => set({ cv: initialCV, token: null, user: null }),
     }),
     {
       name: 'cv-storage',
