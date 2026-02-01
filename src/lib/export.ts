@@ -11,7 +11,6 @@ const generateInterviewTipsPDF = async () => {
   const contentWidth = pageWidth - (margin * 2);
   let y = 20;
 
-  // Helper functions
   const addText = (text: string, size: number, style: 'normal' | 'bold' = 'normal', color: number[] = [0, 0, 0]) => {
     pdf.setFontSize(size);
     pdf.setFont('helvetica', style);
@@ -27,126 +26,53 @@ const generateInterviewTipsPDF = async () => {
 
   // Title
   addText('', 24, 'bold', [26, 54, 93]);
-  pdf.text('Top 15 Interview Questions & Tips', pageWidth / 2, y, { align: 'center' });
+  pdf.text('🎯 Top 15 Interview Questions & Tips', pageWidth / 2, y, { align: 'center' });
   y += 10;
 
   addText('', 10, 'normal', [113, 128, 150]);
   pdf.text('Prepared by CVistan - Your Professional CV Builder', pageWidth / 2, y, { align: 'center' });
   y += 15;
 
-  // Questions data
   const questions = [
-    {
-      q: '1. "Tell me about yourself"',
-      tip: 'Keep it professional, 2 minutes max. Focus on career, not personal life.',
-      sample: 'I have [X years] of experience as a [Job Title]. I specialize in [Key Skills] and have worked with [Companies]. I\'m excited about this role because [Reason].'
-    },
-    {
-      q: '2. "Why do you want to work here?"',
-      tip: 'Research the company beforehand. Mention specific things you admire.',
-      sample: 'I admire [Company]\'s work in [Area]. My skills in [Skills] align perfectly, and I can contribute to [Goal].'
-    },
-    {
-      q: '3. "What are your greatest strengths?"',
-      tip: 'Choose 2-3 strengths relevant to the job. Give examples.',
-      sample: 'My strengths are [Strength 1] and [Strength 2]. At [Company], I [Achievement].'
-    },
-    {
-      q: '4. "What is your greatest weakness?"',
-      tip: 'Be honest but show you\'re improving. Never say "perfectionist."',
-      sample: 'I used to struggle with [Weakness]. I\'ve been working on it by [Action] and seeing improvement.'
-    },
-    {
-      q: '5. "Where do you see yourself in 5 years?"',
-      tip: 'Show ambition but also commitment to the company.',
-      sample: 'In 5 years, I see myself as a [Role], contributing to [Company Goals].'
-    },
-    {
-      q: '6. "Why did you leave your last job?"',
-      tip: 'Stay positive. Never badmouth previous employers.',
-      sample: 'I learned a lot at [Company], but I\'m seeking new challenges in [Area].'
-    },
-    {
-      q: '7. "Tell me about a challenge you faced"',
-      tip: 'Use STAR: Situation, Task, Action, Result.',
-      sample: 'At [Company], we faced [Challenge]. I [Action], resulting in [Outcome].'
-    },
-    {
-      q: '8. "What are your salary expectations?"',
-      tip: 'Research market rates. Give a range, not exact number.',
-      sample: 'Based on my research, I\'m looking for [$X - $Y], but I\'m open to discussion.'
-    },
-    {
-      q: '9. "Why should we hire you?"',
-      tip: 'Summarize your unique value confidently.',
-      sample: 'I bring [Skills] with [X years] experience. I\'ve [Achievement] and can deliver results here.'
-    },
-    {
-      q: '10. "Do you have questions for us?"',
-      tip: 'Always say YES! Ask about role, team, or growth.',
-      sample: 'What does success look like in 6 months? Tell me about the team. What challenges does the team face?'
-    },
-    {
-      q: '11. "Describe your work style"',
-      tip: 'Be honest and relate it to job requirements.',
-      sample: 'I\'m [collaborative/independent] and thrive in [environment]. I ensure clear communication.'
-    },
-    {
-      q: '12. "How do you handle stress?"',
-      tip: 'Give a specific example of handling pressure.',
-      sample: 'I handle stress by [Method]. When [Situation], I [Action] and delivered on time.'
-    },
-    {
-      q: '13. "What motivates you?"',
-      tip: 'Connect your motivation to the job.',
-      sample: 'I\'m motivated by [Driver]. This role excites me because [Aspect].'
-    },
-    {
-      q: '14. "Tell me about teamwork experience"',
-      tip: 'Highlight collaboration and your contribution.',
-      sample: 'I worked with [X people] on [Project]. My role was [Role]. We achieved [Result].'
-    },
-    {
-      q: '15. "What do you know about our company?"',
-      tip: 'Do your homework! Research website, news, LinkedIn.',
-      sample: '[Company] leads in [Field]. I\'m impressed by [Achievement]. Your mission resonates with me.'
-    }
+    { q: '1. "Tell me about yourself"', tip: 'Keep it professional, 2 minutes max. Focus on career.', sample: 'I have [X years] experience as [Title]. I specialize in [Skills].' },
+    { q: '2. "Why do you want to work here?"', tip: 'Research the company. Mention specific things you admire.', sample: 'I admire [Company]\'s work in [Area]. My skills align perfectly.' },
+    { q: '3. "What are your greatest strengths?"', tip: 'Choose 2-3 strengths relevant to the job. Give examples.', sample: 'My strengths are [Strength 1] and [Strength 2].' },
+    { q: '4. "What is your greatest weakness?"', tip: 'Be honest but show improvement. Never say "perfectionist."', sample: 'I used to struggle with [X]. I\'ve improved by [Action].' },
+    { q: '5. "Where do you see yourself in 5 years?"', tip: 'Show ambition but also commitment to the company.', sample: 'In 5 years, I see myself as [Role], contributing to [Goals].' },
+    { q: '6. "Why did you leave your last job?"', tip: 'Stay positive. Never badmouth previous employers.', sample: 'I learned a lot, but I\'m seeking new challenges in [Area].' },
+    { q: '7. "Tell me about a challenge you faced"', tip: 'Use STAR: Situation, Task, Action, Result.', sample: 'At [Company], we faced [Challenge]. I [Action], resulting in [Outcome].' },
+    { q: '8. "What are your salary expectations?"', tip: 'Research market rates. Give a range.', sample: 'Based on my research, I\'m looking for [$X - $Y].' },
+    { q: '9. "Why should we hire you?"', tip: 'Summarize your unique value confidently.', sample: 'I bring [Skills] with [X years] experience. I can deliver results.' },
+    { q: '10. "Do you have questions for us?"', tip: 'Always say YES! Ask about role, team, or growth.', sample: 'What does success look like? Tell me about the team.' },
+    { q: '11. "Describe your work style"', tip: 'Be honest and relate it to job requirements.', sample: 'I\'m [collaborative/independent] and thrive in [environment].' },
+    { q: '12. "How do you handle stress?"', tip: 'Give a specific example of handling pressure.', sample: 'I handle stress by [Method]. When [Situation], I delivered on time.' },
+    { q: '13. "What motivates you?"', tip: 'Connect your motivation to the job.', sample: 'I\'m motivated by [Driver]. This role excites me because [Aspect].' },
+    { q: '14. "Tell me about teamwork experience"', tip: 'Highlight collaboration and your contribution.', sample: 'I worked with [X people] on [Project]. We achieved [Result].' },
+    { q: '15. "What do you know about our company?"', tip: 'Do your homework! Research website, news, LinkedIn.', sample: '[Company] leads in [Field]. Your mission resonates with me.' }
   ];
 
-  // Add questions
-  questions.forEach((item, index) => {
-    checkNewPage(45);
-
-    // Question box
+  questions.forEach((item) => {
+    checkNewPage(35);
     pdf.setFillColor(247, 250, 252);
-    pdf.roundedRect(margin, y, contentWidth, 40, 3, 3, 'F');
+    pdf.roundedRect(margin, y, contentWidth, 30, 3, 3, 'F');
     pdf.setDrawColor(49, 130, 206);
     pdf.setLineWidth(0.5);
-    pdf.line(margin, y, margin, y + 40);
-
-    // Question title
+    pdf.line(margin, y, margin, y + 30);
     addText('', 11, 'bold', [49, 130, 206]);
-    pdf.text(item.q, margin + 5, y + 8);
-
-    // Tip
+    pdf.text(item.q, margin + 5, y + 7);
     addText('', 9, 'normal', [113, 128, 150]);
-    pdf.text('Tip: ' + item.tip, margin + 5, y + 16);
-
-    // Sample answer
+    pdf.text('💡 ' + item.tip, margin + 5, y + 14);
     addText('', 9, 'normal', [74, 85, 104]);
-    const sampleLines = pdf.splitTextToSize('Sample: ' + item.sample, contentWidth - 10);
-    pdf.text(sampleLines, margin + 5, y + 24);
-
-    y += 45;
+    const sampleLines = pdf.splitTextToSize('Example: ' + item.sample, contentWidth - 10);
+    pdf.text(sampleLines, margin + 5, y + 22);
+    y += 35;
   });
 
-  // Quick Tips Section
-  checkNewPage(60);
-  y += 10;
-
+  checkNewPage(50);
+  y += 5;
   addText('', 14, 'bold', [45, 55, 72]);
-  pdf.text('Quick Tips Before Your Interview', margin, y);
-  y += 10;
+  pdf.text('✅ Quick Tips Before Your Interview', margin, y);
+  y += 8;
 
   const tips = [
     'Research the company thoroughly',
@@ -165,17 +91,12 @@ const generateInterviewTipsPDF = async () => {
     y += 6;
   });
 
-  // Footer
   y += 10;
   pdf.setDrawColor(226, 232, 240);
   pdf.line(margin, y, pageWidth - margin, y);
   y += 8;
-
-  addText('', 10, 'bold', [49, 130, 206]);
-  pdf.text('CVistan - Professional CV Builder', pageWidth / 2, y, { align: 'center' });
-  y += 6;
-  addText('', 10, 'normal', [113, 128, 150]);
-  pdf.text('Good luck with your interview!', pageWidth / 2, y, { align: 'center' });
+  addText('', 12, 'bold', [49, 130, 206]);
+  pdf.text('CVistan - Good luck with your interview! 🍀', pageWidth / 2, y, { align: 'center' });
 
   pdf.save('Interview-Tips.pdf');
 };
@@ -213,7 +134,6 @@ export async function generatePDF(
     if (imgHeight > 297) {
       let remainingHeight = imgHeight - 297;
       let position = -297;
-      
       while (remainingHeight > 0) {
         pdf.addPage();
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
@@ -223,12 +143,7 @@ export async function generatePDF(
     }
     
     pdf.save(filename);
-    
-    // Auto-download Interview Tips PDF after 1 second
-    setTimeout(() => {
-      generateInterviewTipsPDF();
-    }, 1000);
-    
+    setTimeout(() => { generateInterviewTipsPDF(); }, 1000);
     return true;
   } catch (error) {
     console.error('PDF generation error:', error);
@@ -251,7 +166,6 @@ export async function generateWord(
       return year;
     };
 
-    // Sort experience and education by year (newest first)
     const sortedExperience = [...cv.experience].sort((a, b) => {
       const yearA = parseInt(a.startYear) || 0;
       const yearB = parseInt(b.startYear) || 0;
@@ -264,19 +178,17 @@ export async function generateWord(
       return yearB - yearA;
     });
 
+    const sortedCertifications = [...cv.certifications].sort((a, b) => {
+      const yearA = parseInt(a.issueYear) || 0;
+      const yearB = parseInt(b.issueYear) || 0;
+      return yearB - yearA;
+    });
+
     const html = `
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
       <head>
         <meta charset="utf-8">
         <title>CV - ${cv.personal.fullName}</title>
-        <!--[if gte mso 9]>
-        <xml>
-          <w:WordDocument>
-            <w:View>Print</w:View>
-            <w:Zoom>100</w:Zoom>
-          </w:WordDocument>
-        </xml>
-        <![endif]-->
         <style>
           @page { margin: 1in; }
           body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #333; }
@@ -286,28 +198,21 @@ export async function generateWord(
           .contact { color: #718096; font-size: 10pt; text-align: center; margin-bottom: 20pt; }
           .summary { background-color: #f7fafc; padding: 10pt; margin-bottom: 15pt; border-left: 3pt solid #3182ce; }
           .entry { margin-bottom: 15pt; }
-          .entry-header { display: flex; justify-content: space-between; }
           .job-title { font-weight: bold; font-size: 12pt; color: #1a202c; }
           .company { color: #3182ce; font-size: 11pt; }
           .date { color: #718096; font-size: 10pt; font-style: italic; }
           .description { color: #4a5568; font-size: 10pt; margin-top: 5pt; white-space: pre-line; }
           .skills { margin-top: 5pt; }
           .skill-tag { display: inline-block; background-color: #e2e8f0; padding: 3pt 8pt; margin: 2pt; border-radius: 3pt; font-size: 10pt; }
-          .languages { margin-top: 5pt; }
-          .lang-item { margin-bottom: 3pt; }
+          .cert-mode { display: inline-block; background-color: #e6fffa; color: #319795; padding: 2pt 6pt; border-radius: 3pt; font-size: 9pt; margin-left: 5pt; }
         </style>
       </head>
       <body>
         <h1>${cv.personal.fullName || 'Your Name'}</h1>
         <p class="subtitle">${cv.personal.jobTitle || ''}</p>
-        <p class="contact">
-          ${[cv.personal.email, cv.personal.phone, cv.personal.location].filter(Boolean).join(' | ')}
-        </p>
+        <p class="contact">${[cv.personal.email, cv.personal.phone, cv.personal.location].filter(Boolean).join(' | ')}</p>
         
-        ${cv.summary ? `
-          <h2>Professional Summary</h2>
-          <div class="summary">${cv.summary}</div>
-        ` : ''}
+        ${cv.summary ? `<h2>Professional Summary</h2><div class="summary">${cv.summary}</div>` : ''}
         
         ${sortedExperience.length > 0 ? `
           <h2>Work Experience</h2>
@@ -332,28 +237,33 @@ export async function generateWord(
             </div>
           `).join('')}
         ` : ''}
+
+        ${sortedCertifications.length > 0 ? `
+          <h2>Certifications & Training</h2>
+          ${sortedCertifications.map(cert => `
+            <div class="entry">
+              <p class="job-title">${cert.name || ''}${cert.mode ? `<span class="cert-mode">${cert.mode === 'online' ? '🌐 Online' : '🏢 In-Person'}</span>` : ''}</p>
+              <p class="company">${cert.issuer || ''}</p>
+              <p class="date">${formatDate(cert.issueMonth, cert.issueYear)}${cert.noExpiry ? ' (No Expiry)' : cert.expiryYear ? ' - ' + formatDate(cert.expiryMonth, cert.expiryYear) : ''}</p>
+              ${cert.credentialId ? `<p class="description">Credential ID: ${cert.credentialId}</p>` : ''}
+            </div>
+          `).join('')}
+        ` : ''}
         
         ${cv.skills.length > 0 ? `
           <h2>Skills</h2>
-          <div class="skills">
-            ${cv.skills.map(s => `<span class="skill-tag">${s}</span>`).join(' ')}
-          </div>
+          <div class="skills">${cv.skills.map(s => `<span class="skill-tag">${s}</span>`).join(' ')}</div>
         ` : ''}
         
         ${cv.languages.length > 0 ? `
           <h2>Languages</h2>
-          <div class="languages">
-            ${cv.languages.map(l => `<p class="lang-item"><strong>${l.name}</strong> - ${l.level}</p>`).join('')}
-          </div>
+          <div>${cv.languages.map(l => `<p><strong>${l.name}</strong> - ${l.level}</p>`).join('')}</div>
         ` : ''}
       </body>
       </html>
     `;
     
-    const blob = new Blob(['\ufeff', html], { 
-      type: 'application/vnd.ms-word;charset=utf-8' 
-    });
-    
+    const blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-word;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = filename.endsWith('.doc') ? filename : filename.replace('.docx', '.doc');
@@ -362,11 +272,7 @@ export async function generateWord(
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
     
-    // Auto-download Interview Tips PDF after 1 second
-    setTimeout(() => {
-      generateInterviewTipsPDF();
-    }, 1000);
-    
+    setTimeout(() => { generateInterviewTipsPDF(); }, 1000);
     return true;
   } catch (error) {
     console.error('Word generation error:', error);
@@ -377,9 +283,7 @@ export async function generateWord(
 export function shareViaWhatsApp(phone: string | undefined, message: string): void {
   const cleanPhone = phone?.replace(/[^\d]/g, '') || '';
   const encodedMessage = encodeURIComponent(message);
-  const url = cleanPhone 
-    ? `https://wa.me/${cleanPhone}?text=${encodedMessage}`
-    : `https://wa.me/?text=${encodedMessage}`;
+  const url = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodedMessage}` : `https://wa.me/?text=${encodedMessage}`;
   window.open(url, '_blank');
 }
 
