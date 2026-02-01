@@ -41,6 +41,20 @@ export interface Education {
   thesisTitle: string;
 }
 
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issueMonth: string;
+  issueYear: string;
+  expiryMonth: string;
+  expiryYear: string;
+  noExpiry: boolean;
+  credentialId: string;
+  credentialUrl: string;
+  mode: 'online' | 'in-person' | '';
+}
+
 export interface Language {
   name: string;
   level: string;
@@ -51,6 +65,7 @@ export interface CVData {
   summary: string;
   experience: Experience[];
   education: Education[];
+  certifications: Certification[];
   skills: string[];
   languages: Language[];
 }
@@ -69,14 +84,10 @@ export interface ValidationResult {
 }
 
 export type TemplateId = 
-  | 'classic' 
-  | 'modern' 
-  | 'executive' 
-  | 'creative' 
-  | 'minimal' 
-  | 'tech' 
-  | 'academic' 
-  | 'professional';
+  | 'morgan' 
+  | 'catrine' 
+  | 'sarah' 
+  | 'olivia';
 
 export type LanguageCode = 'en' | 'ar' | 'ku';
 
