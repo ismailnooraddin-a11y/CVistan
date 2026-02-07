@@ -1,42 +1,71 @@
 // src/lib/validation.ts
-import { CVData, ValidationResult, ValidationErrors } from './types';
+import type { CVData, ValidationResult, ValidationErrors } from './types';
+import { validateEducation } from './types';
 
 export function validateCV(
   cv: CVData,
-  t: (key: string) => string
+  t: (key: string) => string | string[]
 ): ValidationResult {
   const errors: ValidationErrors = {};
+  let isValid = true;
 
-  // Required: Full Name
+  // Required fields
   if (!cv.personal.fullName.trim()) {
-    errors.fullName = t('reqName');
+    errors.fullName = t('reqName') as string;
+    isValid = false;
   }
 
-  // Required: Job Title
   if (!cv.personal.jobTitle.trim()) {
-    errors.jobTitle = t('reqTitle');
+    errors.jobTitle = t('reqTitle') as string;
+    isValid = false;
   }
 
-  // Required: Phone Number
   if (!cv.personal.phone.trim()) {
-    errors.phone = t('reqPhone');
+    errors.phone = t('reqPhone') as string;
+    isValid = false;
   }
 
-  // At least one section must have content
-  const hasExperience = cv.experience.length > 0 && cv.experience.some(
-    exp => exp.jobTitle.trim() && exp.company.trim()
-  );
-  const hasEducation = cv.education.length > 0 && cv.education.some(
-    edu => edu.degree.trim() && edu.institution.trim()
-  );
-  const hasSkills = cv.skills.length > 0;
+  // Must have at least one section filled
+  const hasContent =
+    cv.experience.length > 0 ||
+    cv.education.length > 0 ||
+    cv.skills.length > 0 ||
+    cv.certifications.length > 0;
 
-  if (!hasExperience && !hasEducation && !hasSkills) {
-    errors.sections = t('reqSection');
+  if (!hasContent) {
+    errors.sections = t('reqSection') as string;
+    isValid = false;
   }
 
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors,
-  };
+  // Validate education entries
+  for (const edu of cv.education) {
+    const eduError = validateEducation(edu);
+    if (eduError) {
+      errors.education = eduError;
+      isValid = false;
+      break;
+    }
+  }
+
+  return { isValid, errors };
+}
+
+// Normalize text input
+export function normalizeText(text: string): string {
+  return text
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n');
+}
+
+// Validate email format
+export function validateEmail(email: string): boolean {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
+// Validate phone format (basic)
+export function validatePhone(phone: string): boolean {
+  const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  return cleaned.length >= 10 && /^\+?[\d]+$/.test(cleaned);
 }
