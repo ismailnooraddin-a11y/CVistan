@@ -207,7 +207,7 @@ export async function generateWord(
             font-family: Calibri, Arial, sans-serif; 
             font-size: ${TOKENS.fonts.body}pt; 
             line-height: ${TOKENS.lineHeight.normal}; 
-            color: ${TOKENS.colors.text}; 
+            color: ${TOKENS.colors.textPrimary}; 
           }
           h1 { 
             font-size: ${TOKENS.fonts.name}pt; 
