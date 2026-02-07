@@ -1,242 +1,200 @@
 // src/lib/pdf/tokens.ts
-// Professional Typography & Layout Tokens with Density Controls
+// Single Source of Truth for CV Design System
 
 export type Density = 'compact' | 'normal' | 'spacious';
-export type FontSize = 'small' | 'medium' | 'large';
 
-// Base design tokens
-export const BASE_TOKENS = {
-  // Page settings (A4)
+// =============================================================================
+// CORE DESIGN TOKENS - NEVER AUTO-SCALE THESE
+// =============================================================================
+
+export const TOKENS = {
+  // Page (A4: 210mm x 297mm)
   page: {
-    width: 210, // mm
-    height: 297, // mm
-    marginTop: 18, // mm
-    marginBottom: 18, // mm
-    marginLeft: 18, // mm
-    marginRight: 18, // mm
+    width: 210,
+    height: 297,
+    margin: 0, // We handle margins in the template
   },
 
-  // Grid system
-  grid: {
-    dateColumnWidth: 120, // px - fixed width for dates
-    sidebarWidth: '32%',
-    gutter: 16, // px
+  // Fixed Typography Scale (in pixels, converted to pt for PDF)
+  fonts: {
+    name: 28,        // Main name
+    jobTitle: 14,    // Job title under name
+    sectionTitle: 11, // Section headers
+    body: 10,        // Main content
+    small: 9,        // Secondary info
+    tiny: 8,         // Dates, metadata
   },
 
-  // Colors (refined for premium look)
-  colors: {
-    primary: '#1a202c',
-    secondary: '#4a5568',
-    accent: '#3182ce',
-    text: '#2d3748',
-    textLight: '#718096',
-    textMuted: '#a0aec0',
-    border: '#e2e8f0',
-    borderLight: '#edf2f7',
-    background: '#f7fafc',
-    white: '#ffffff',
-  },
-
-  // Template color schemes
-  schemes: {
-    morgan: {
-      primary: '#1a1a1a',
-      accent: '#7c3aed',
-      sidebar: '#fafafa',
-      divider: '#e5e5e5',
-    },
-    catrine: {
-      primary: '#8B9A7D',
-      accent: '#6B7A5D',
-      sidebar: '#8B9A7D',
-      divider: 'rgba(255,255,255,0.3)',
-    },
-    sarah: {
-      primary: '#C9A66B',
-      accent: '#B8956A',
-      sidebar: '#ffffff',
-      divider: '#e5e5e5',
-    },
-    olivia: {
-      primary: '#2D3748',
-      accent: '#DD6B20',
-      sidebar: '#2D3748',
-      divider: '#DD6B20',
-    },
-  },
-
-  // Line heights
+  // Line Heights
   lineHeight: {
     tight: 1.2,
     normal: 1.4,
     relaxed: 1.6,
   },
 
-  // Divider styling (lighter for premium look)
+  // Color Palette (Professional, ATS-friendly)
+  colors: {
+    // Primary
+    headerBg: '#1a202c',      // Dark header background
+    headerText: '#ffffff',    // White text on header
+    accent: '#3182ce',        // Blue accent for highlights
+    
+    // Text
+    textPrimary: '#1a202c',   // Main text (almost black)
+    textSecondary: '#4a5568', // Secondary text (dark gray)
+    textMuted: '#718096',     // Muted text (medium gray)
+    textLight: '#a0aec0',     // Light text (light gray)
+    
+    // Backgrounds
+    sidebarBg: '#f8fafc',     // Light gray sidebar
+    white: '#ffffff',
+    
+    // Borders
+    border: '#e2e8f0',        // Light border
+    divider: '#cbd5e1',       // Section dividers
+  },
+
+  // Layout Grid
+  grid: {
+    sidebarWidth: '32%',      // Sidebar takes 32% of width
+    mainWidth: '68%',         // Main content takes 68%
+    dateColumnWidth: 110,     // Fixed width for date column (px)
+    gutter: 16,               // Gap between columns
+  },
+
+  // Spacing Scale (consistent increments)
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    xxl: 32,
+  },
+
+  // Border & Divider
   divider: {
-    weight: 1.5, // px - reduced from thick purple lines
+    weight: 1,        // 1px divider lines (subtle)
     style: 'solid',
   },
 
-  // Bullet styling
+  // Bullet Styling
   bullet: {
     char: '•',
-    indent: 12, // px
-    spacing: 4, // px between bullets
+    indent: 14,       // Left indent for bullets
+    gap: 6,           // Space after bullet char
   },
 };
 
-// Font size presets
-export const FONT_SIZES: Record<FontSize, {
-  name: number;
-  jobTitle: number;
-  sectionTitle: number;
-  body: number;
-  small: number;
-  tiny: number;
-}> = {
-  small: {
-    name: 20,
-    jobTitle: 11,
-    sectionTitle: 10,
-    body: 9,
-    small: 8,
-    tiny: 7,
-  },
-  medium: {
-    name: 24,
-    jobTitle: 13,
-    sectionTitle: 11,
-    body: 10,
-    small: 9,
-    tiny: 8,
-  },
-  large: {
-    name: 28,
-    jobTitle: 15,
-    sectionTitle: 12,
-    body: 11,
-    small: 10,
-    tiny: 9,
-  },
-};
+// =============================================================================
+// DENSITY PRESETS - Only affects spacing, NOT font sizes
+// =============================================================================
 
-// Spacing presets based on density
-export const SPACING: Record<Density, {
-  sectionGap: number;
-  itemGap: number;
-  bulletGap: number;
-  headerPadding: number;
-  contentPadding: number;
-  lineHeight: number;
+export const DENSITY: Record<Density, {
+  sectionGap: number;      // Space between sections
+  itemGap: number;         // Space between items (jobs, education entries)
+  bulletGap: number;       // Space between bullet points
+  headerPadding: number;   // Header internal padding
+  sidebarPadding: number;  // Sidebar internal padding
+  mainPadding: number;     // Main content internal padding
+  lineHeight: number;      // Line height multiplier
 }> = {
   compact: {
-    sectionGap: 10,
-    itemGap: 6,
-    bulletGap: 2,
-    headerPadding: 12,
-    contentPadding: 12,
-    lineHeight: 1.25,
+    sectionGap: 14,
+    itemGap: 10,
+    bulletGap: 3,
+    headerPadding: 20,
+    sidebarPadding: 20,
+    mainPadding: 24,
+    lineHeight: 1.3,
   },
   normal: {
-    sectionGap: 16,
-    itemGap: 10,
-    bulletGap: 4,
-    headerPadding: 16,
-    contentPadding: 16,
+    sectionGap: 20,
+    itemGap: 14,
+    bulletGap: 5,
+    headerPadding: 24,
+    sidebarPadding: 24,
+    mainPadding: 28,
     lineHeight: 1.4,
   },
   spacious: {
-    sectionGap: 24,
-    itemGap: 14,
-    bulletGap: 6,
-    headerPadding: 20,
-    contentPadding: 20,
+    sectionGap: 28,
+    itemGap: 18,
+    bulletGap: 7,
+    headerPadding: 28,
+    sidebarPadding: 28,
+    mainPadding: 32,
     lineHeight: 1.5,
   },
 };
 
-// Get computed tokens based on user settings
-export const getTokens = (
-  density: Density = 'normal',
-  fontSize: FontSize = 'medium'
-) => {
-  return {
-    ...BASE_TOKENS,
-    fonts: FONT_SIZES[fontSize],
-    spacing: SPACING[density],
-  };
-};
+// =============================================================================
+// PRINT/EXPORT CSS - Hides ALL editor UI elements
+// =============================================================================
 
-// Print/Export CSS (hides all editor UI)
-export const PRINT_CSS = `
+export const PRINT_STYLES = `
   @media print {
-    /* Hide all editor UI */
-    .editor-ui,
-    .toolbar,
-    .floating-button,
-    .edit-controls,
-    .drag-handle,
-    .hover-outline,
+    /* Hide all non-CV elements */
+    body > *:not(.cv-page) { display: none !important; }
+    .no-print, 
+    .editor-ui, 
+    .toolbar, 
+    .navigation,
     .step-indicator,
-    .navigation-buttons,
-    .preview-controls,
-    [data-editor-ui],
-    button:not([data-print-visible]),
-    .no-print {
-      display: none !important;
-      visibility: hidden !important;
+    button:not(.cv-content *) { 
+      display: none !important; 
     }
 
-    /* Reset page margins */
+    /* Page setup */
     @page {
-      margin: 18mm;
-      size: A4;
+      size: A4 portrait;
+      margin: 0;
     }
 
-    /* Prevent bad page breaks */
-    .cv-section {
-      break-inside: avoid;
-      page-break-inside: avoid;
+    /* Prevent bad breaks */
+    .cv-section { 
+      break-inside: avoid; 
+      page-break-inside: avoid; 
+    }
+    .cv-item { 
+      break-inside: avoid; 
+      page-break-inside: avoid; 
+    }
+    .cv-section-title { 
+      break-after: avoid; 
+      page-break-after: avoid; 
     }
 
-    .cv-section-title {
-      break-after: avoid;
-      page-break-after: avoid;
-    }
-
-    .cv-item {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-
-    /* Ensure content fills page */
-    body {
+    /* Ensure colors print */
+    * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
+      color-adjust: exact !important;
     }
 
-    /* Clean backgrounds */
-    .cv-container {
+    /* Remove shadows/borders for clean print */
+    .cv-page {
       box-shadow: none !important;
       border: none !important;
     }
   }
 `;
 
-// Degree types for validation
+// =============================================================================
+// VALIDATION CONSTANTS
+// =============================================================================
+
 export const DEGREE_TYPES = [
   'High School Diploma',
   'Associate Degree',
-  'Bachelor\'s Degree',
-  'Master\'s Degree',
+  "Bachelor's Degree",
+  "Master's Degree",
   'Doctoral Degree (PhD)',
-  'Professional Degree (MD, JD, etc.)',
+  'Professional Degree',
   'Certificate',
   'Diploma',
 ] as const;
 
-// Common fields of study (for suggestions)
 export const FIELDS_OF_STUDY = [
   'Accounting',
   'Business Administration',
