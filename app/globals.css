@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body {
+  height: 100%;
+}
+
+/* A4 preview sizing */
+.a4 {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 14mm;
+  background: white;
+  box-sizing: border-box;
+}
+
+.a4-shadow {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+  border-radius: 14px;
+}
+
+/* Print settings */
+@media print {
+  @page { size: A4; margin: 10mm; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none !important; }
+  .print-reset {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .print-area {
+    width: auto !important;
+    min-height: auto !important;
+    padding: 0 !important;
+  }
+}
