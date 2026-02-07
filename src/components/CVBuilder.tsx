@@ -6,10 +6,17 @@ import { translations } from '@/lib/translations';
 import { validateCV } from '@/lib/validation';
 import { generatePDF, generateWord, shareViaWhatsApp, shareViaTelegram } from '@/lib/export';
 import { TEMPLATES, TemplateKey } from '@/templates';
-import type { CVData, LanguageCode, ValidationErrors, SocialLinks, Certification } from '@/lib/types';
+import { DEGREE_TYPES, FIELDS_OF_STUDY } from '@/lib/pdf/tokens';
+import { validateEducation, generateDegreeString } from '@/lib/types';
+import type { CVData, LanguageCode, ValidationErrors, SocialLinks, Certification, Education, CVSettings } from '@/lib/types';
 
 const emptySocialLinks: SocialLinks = {
   linkedin: '', github: '', portfolio: '', twitter: '', instagram: '', behance: ''
+};
+
+const defaultSettings: CVSettings = {
+  density: 'normal',
+  fontSize: 'medium',
 };
 
 const initialCV: CVData = {
@@ -17,27 +24,65 @@ const initialCV: CVData = {
     fullName: '', jobTitle: '', email: '', phone: '', location: '', 
     dateOfBirth: '', photo: null, socialLinks: { ...emptySocialLinks }
   },
-  summary: '', experience: [], education: [], certifications: [], skills: [], languages: [],
+  summary: '', 
+  experience: [], 
+  education: [], 
+  certifications: [], 
+  skills: [], 
+  languages: [],
+  settings: { ...defaultSettings },
 };
 
+// Validation Error Component
 function ValidationError({ msg }: { msg?: string }) {
   return msg ? <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><span>⚠️</span>{msg}</p> : null;
 }
 
-function Input({ label, value, onChange, error, required, placeholder, type = 'text', tip, dir }: any) {
+// Input Component
+function Input({ label, value, onChange, error, required, placeholder, type = 'text', tip, dir, disabled }: any) {
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
         {label}{required && <span className="text-red-500 ml-1">*</span>}
       </label>
       {tip && <p className="text-xs text-gray-400 mb-1">{tip}</p>}
-      <input type={type} value={value} onChange={onChange} placeholder={placeholder} dir={dir}
-        className={`w-full px-3 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${error ? 'border-red-400 bg-red-50' : 'border-gray-200'}`} />
+      <input 
+        type={type} 
+        value={value} 
+        onChange={onChange} 
+        placeholder={placeholder} 
+        dir={dir}
+        disabled={disabled}
+        className={`w-full px-3 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${error ? 'border-red-400 bg-red-50' : 'border-gray-200'} ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
+      />
       <ValidationError msg={error} />
     </div>
   );
 }
 
+// Select Component
+function Select({ label, value, onChange, options, tip, required }: any) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}{required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      {tip && <p className="text-xs text-gray-400 mb-1">{tip}</p>}
+      <select 
+        value={value} 
+        onChange={onChange}
+        className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+      >
+        <option value="">Select...</option>
+        {options.map((opt: string) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+// Preview Modal
 function PreviewModal({ tpl, rtl, t, onClose, onSelect, sample }: any) {
   const Comp = TEMPLATES[tpl as TemplateKey].component;
   return (
@@ -61,6 +106,7 @@ function PreviewModal({ tpl, rtl, t, onClose, onSelect, sample }: any) {
   );
 }
 
+// Auth Modal
 function AuthModal({ mode, t, rtl, onClose, onSubmit, onSwitch, loading }: any) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -114,6 +160,57 @@ function AuthModal({ mode, t, rtl, onClose, onSubmit, onSwitch, loading }: any) 
   );
 }
 
+// Settings Panel Component
+function SettingsPanel({ settings, onChange, t }: { settings: CVSettings; onChange: (s: CVSettings) => void; t: any }) {
+  return (
+    <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+      <h4 className="font-medium text-gray-700 text-sm">📐 Layout Settings</h4>
+      
+      {/* Density Control */}
+      <div>
+        <label className="block text-xs text-gray-500 mb-2">Density</label>
+        <div className="flex gap-2">
+          {(['compact', 'normal', 'spacious'] as const).map(d => (
+            <button
+              key={d}
+              onClick={() => onChange({ ...settings, density: d })}
+              className={`flex-1 py-2 text-xs rounded-lg border transition-all capitalize ${
+                settings.density === d 
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+              }`}
+            >
+              {d}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Font Size Control */}
+      <div>
+        <label className="block text-xs text-gray-500 mb-2">Font Size</label>
+        <div className="flex gap-2">
+          {(['small', 'medium', 'large'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => onChange({ ...settings, fontSize: f })}
+              className={`flex-1 py-2 text-xs rounded-lg border transition-all capitalize ${
+                settings.fontSize === f 
+                  ? 'bg-blue-600 text-white border-blue-600' 
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+              }`}
+            >
+              {f === 'small' ? 'A' : f === 'medium' ? 'A' : 'A'}
+              <span className="ml-1">{f}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Social Icons Config
 const socialIcons: Record<string, { icon: string; color: string }> = {
   linkedin: { icon: '💼', color: 'bg-blue-600' },
   github: { icon: '💻', color: 'bg-gray-800' },
@@ -123,6 +220,7 @@ const socialIcons: Record<string, { icon: string; color: string }> = {
   behance: { icon: '🎨', color: 'bg-blue-500' },
 };
 
+// Main CVBuilder Component
 export function CVBuilder() {
   const [lang, setLang] = useState<LanguageCode | null>(null);
   const [template, setTemplate] = useState<TemplateKey>('morgan');
@@ -131,12 +229,14 @@ export function CVBuilder() {
   const [cv, setCv] = useState<CVData>(initialCV);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
   const [exporting, setExporting] = useState<'pdf' | 'word' | null>(null);
   const [authModal, setAuthModal] = useState<'signin' | 'signup' | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [user, setUser] = useState<{ id: string; email: string; fullName: string } | null>(null);
   const [saved, setSaved] = useState(false);
   const [activeSocials, setActiveSocials] = useState<string[]>([]);
+  const [exportMode, setExportMode] = useState(false);
   const cvRef = useRef<HTMLDivElement>(null);
 
   // Check for saved user on mount
@@ -144,7 +244,11 @@ export function CVBuilder() {
     const savedUser = localStorage.getItem('cvistan_user');
     const savedToken = localStorage.getItem('cvistan_token');
     if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Failed to parse user', e);
+      }
     }
   }, []);
 
@@ -158,6 +262,7 @@ export function CVBuilder() {
 
   const defaultSkills = ['Microsoft Office', 'Communication', 'Leadership', 'Problem Solving', 'Teamwork', 'Project Management', 'Time Management', 'Critical Thinking', 'Customer Service', 'Data Analysis', 'Public Speaking', 'Negotiation', 'Adaptability', 'Creativity', 'Attention to Detail', 'Organization', 'Decision Making', 'Research', 'Writing', 'Strategic Planning'];
 
+  // Sample data for preview
   const sample: CVData = {
     personal: { 
       fullName: rtl ? 'أحمد أكرم' : 'Ahmed Akram', 
@@ -169,20 +274,25 @@ export function CVBuilder() {
       photo: null,
       socialLinks: { linkedin: 'linkedin.com/in/ahmedakram', github: '', portfolio: '', twitter: '', instagram: '', behance: '' }
     },
-    summary: rtl ? 'محاسب أول بخبرة 5+ سنوات...' : 'Senior Accountant with 5+ years experience in financial reporting and analysis...', 
+    summary: rtl 
+      ? 'محاسب أول بخبرة 5+ سنوات في إعداد التقارير المالية والتحليل. سجل حافل في تحسين العمليات المالية وخفض التكاليف.'
+      : 'Senior Accountant with 5+ years experience in financial reporting and analysis. Proven track record of improving financial processes and reducing costs by 15%.', 
     experience: [
-      { id: '1', jobTitle: rtl ? 'محاسب أول' : 'Senior Accountant', company: rtl ? 'شركة ABC المالية' : 'ABC Financial', startMonth: '1', startYear: '2022', endMonth: '', endYear: '', current: true, description: '• Prepared monthly financial statements\n• Managed accounts for 50+ clients' },
-      { id: '2', jobTitle: rtl ? 'محاسب' : 'Accountant', company: rtl ? 'شركة XYZ' : 'XYZ Corp', startMonth: '6', startYear: '2019', endMonth: '12', endYear: '2021', current: false, description: '• Processed invoices and payments' }
+      { id: '1', jobTitle: rtl ? 'محاسب أول' : 'Senior Accountant', company: rtl ? 'شركة ABC المالية' : 'ABC Financial', startMonth: '1', startYear: '2022', endMonth: '', endYear: '', current: true, description: '• Prepared monthly financial statements\n• Managed accounts for 50+ clients\n• Reduced costs by 15%' },
+      { id: '2', jobTitle: rtl ? 'محاسب' : 'Accountant', company: rtl ? 'شركة XYZ' : 'XYZ Corp', startMonth: '6', startYear: '2019', endMonth: '12', endYear: '2021', current: false, description: '• Processed invoices and payments\n• Assisted with audits' }
     ],
-    education: [{ id: '1', degree: rtl ? 'بكالوريوس محاسبة' : 'BSc Accounting', institution: rtl ? 'جامعة صلاح الدين' : 'Salahaddin University', gradMonth: '5', gradYear: '2019', gpa: '3.8', thesisTitle: '' }],
+    education: [{ id: '1', degreeType: "Bachelor's Degree", fieldOfStudy: 'Accounting', degree: rtl ? 'بكالوريوس محاسبة' : "Bachelor's Degree in Accounting", institution: rtl ? 'جامعة صلاح الدين' : 'Salahaddin University', gradMonth: '5', gradYear: '2019', gpa: '3.8', thesisTitle: '' }],
     certifications: [{ id: '1', name: 'CPA - Certified Public Accountant', issuer: 'AICPA', issueMonth: '3', issueYear: '2021', expiryMonth: '', expiryYear: '', noExpiry: true, credentialId: 'CPA-12345', credentialUrl: '', mode: 'in-person' }],
     skills: ['Financial Analysis', 'QuickBooks', 'SAP', 'Excel', 'Tax Preparation'], 
-    languages: [{ name: rtl ? 'العربية' : 'Arabic', level: t('native') }, { name: 'English', level: t('fluent') }, { name: rtl ? 'الكردية' : 'Kurdish', level: t('native') }]
+    languages: [{ name: rtl ? 'العربية' : 'Arabic', level: t('native') }, { name: 'English', level: t('fluent') }],
+    settings: { density: 'normal', fontSize: 'medium' },
   };
 
+  // Update helpers
   const upd = (key: keyof CVData, value: any) => setCv(p => ({ ...p, [key]: value }));
   const updP = (key: keyof CVData['personal'], value: any) => setCv(p => ({ ...p, personal: { ...p.personal, [key]: value } }));
   const updSocial = (key: keyof SocialLinks, value: string) => setCv(p => ({ ...p, personal: { ...p.personal, socialLinks: { ...p.personal.socialLinks, [key]: value } } }));
+  const updSettings = (settings: CVSettings) => setCv(p => ({ ...p, settings }));
 
   const toggleSocial = (key: string) => {
     if (activeSocials.includes(key)) {
@@ -193,20 +303,58 @@ export function CVBuilder() {
     }
   };
 
+  // Show alert message
+  const showAlertMessage = (msg: string) => {
+    setAlertMsg(msg);
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 4000);
+  };
+
+  // Handle next step
   const handleNext = () => {
-    if (step === 8) {
+    // Validate education on step 4
+    if (step === 4) {
+      for (const edu of cv.education) {
+        const error = validateEducation(edu);
+        if (error) {
+          showAlertMessage(error);
+          return;
+        }
+      }
+    }
+
+    // Final validation on step 9
+    if (step === 9) {
       const { isValid, errors: e } = validateCV(cv, t);
       setErrors(e);
-      if (!isValid) { setShowAlert(true); setTimeout(() => setShowAlert(false), 4000); return; }
+      if (!isValid) { 
+        showAlertMessage(t('validationError') as string);
+        return; 
+      }
     }
     setStep(step + 1);
   };
 
-  const handlePdf = async () => { setExporting('pdf'); await generatePDF(cvRef.current, `cv-${cv.personal.fullName || 'doc'}.pdf`); setExporting(null); };
-  const handleWord = async () => { setExporting('word'); await generateWord(cv, mos, `cv-${cv.personal.fullName || 'doc'}.docx`); setExporting(null); };
+  // Export handlers
+  const handlePdf = async () => { 
+    setExportMode(true);
+    await new Promise(r => setTimeout(r, 100)); // Wait for re-render
+    setExporting('pdf'); 
+    await generatePDF(cvRef.current, `cv-${cv.personal.fullName || 'doc'}.pdf`); 
+    setExporting(null);
+    setExportMode(false);
+  };
+
+  const handleWord = async () => { 
+    setExporting('word'); 
+    await generateWord(cv, mos, `cv-${cv.personal.fullName || 'doc'}.docx`); 
+    setExporting(null); 
+  };
+
   const handleWhatsApp = () => shareViaWhatsApp(cv.personal.phone, `CV: ${cv.personal.fullName} - ${cv.personal.jobTitle}`);
   const handleTelegram = () => shareViaTelegram(`CV: ${cv.personal.fullName} - ${cv.personal.jobTitle}`);
 
+  // Auth handler
   const handleAuth = async (data: any) => {
     setAuthLoading(true);
     try {
@@ -224,7 +372,7 @@ export function CVBuilder() {
         localStorage.setItem('cvistan_token', result.token);
         localStorage.setItem('cvistan_user', JSON.stringify(result.user));
         setUser(result.user);
-        if (authModal === 'signup' || step === 9) {
+        if (authModal === 'signup' || step === 10) {
           await fetch('/api/cv/save', { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${result.token}` }, 
@@ -233,8 +381,13 @@ export function CVBuilder() {
           setSaved(true);
         }
         setAuthModal(null);
+      } else {
+        showAlertMessage(result.error || 'Authentication failed');
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error(e);
+      showAlertMessage('Network error. Please try again.');
+    }
     setAuthLoading(false);
   };
 
@@ -242,6 +395,22 @@ export function CVBuilder() {
     localStorage.removeItem('cvistan_token');
     localStorage.removeItem('cvistan_user');
     setUser(null);
+  };
+
+  // Update education helper
+  const updateEducation = (index: number, field: keyof Education, value: any) => {
+    const updated = [...cv.education];
+    updated[index] = { ...updated[index], [field]: value };
+    
+    // Auto-generate degree string when degreeType or fieldOfStudy changes
+    if (field === 'degreeType' || field === 'fieldOfStudy') {
+      updated[index].degree = generateDegreeString(
+        field === 'degreeType' ? value : updated[index].degreeType,
+        field === 'fieldOfStudy' ? value : updated[index].fieldOfStudy
+      );
+    }
+    
+    upd('education', updated);
   };
 
   // Language Selection (Step 0)
@@ -275,6 +444,7 @@ export function CVBuilder() {
             <h1 className="text-4xl font-bold text-gray-900 mb-2">CVistan</h1>
             <p className="text-gray-500">Build your dream CV in minutes 🚀</p>
           </div>
+          
           <div className="bg-white rounded-3xl shadow-xl p-6">
             <h2 className="text-lg font-semibold text-center mb-4">Select Your Language</h2>
             <div className="space-y-3">
@@ -283,7 +453,11 @@ export function CVBuilder() {
                 { code: 'ar' as LanguageCode, name: 'العربية', flag: '🇸🇦' }, 
                 { code: 'ku' as LanguageCode, name: 'کوردی', flag: '🇮🇶' }
               ].map(l => (
-                <button key={l.code} onClick={() => { setLang(l.code); setStep(1); }} className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                <button 
+                  key={l.code} 
+                  onClick={() => { setLang(l.code); setStep(1); }} 
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                >
                   <span className="text-3xl">{l.flag}</span>
                   <span className="flex-1 text-left font-semibold text-gray-800 group-hover:text-blue-600">{l.name}</span>
                   <span className="text-gray-300 group-hover:text-blue-500">→</span>
@@ -309,6 +483,7 @@ export function CVBuilder() {
     );
   }
 
+  // Steps configuration
   const steps = [
     { key: 'personal', icon: '👤' }, 
     { key: 'summary', icon: '📝' }, 
@@ -317,21 +492,24 @@ export function CVBuilder() {
     { key: 'certifications', icon: '🏆' },
     { key: 'skills', icon: '⭐' }, 
     { key: 'languages', icon: '🌍' }, 
-    { key: 'design', icon: '🎨' }, 
+    { key: 'design', icon: '🎨' },
+    { key: 'settings', icon: '⚙️' },
     { key: 'review', icon: '📥' }
   ];
+  
   const templateList = Object.entries(TEMPLATES).map(([id, tpl]) => ({ id: id as TemplateKey, ...tpl }));
 
   return (
     <div dir={rtl ? 'rtl' : 'ltr'} className={`min-h-screen bg-gray-50 ${rtl ? 'font-arabic' : ''}`}>
+      {/* Alert */}
       {showAlert && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg animate-bounce">
-          ⚠️ {t('validationError')}
+          ⚠️ {alertMsg || t('validationError')}
         </div>
       )}
       
-      {/* Header with Auth */}
-      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
+      {/* Header */}
+      <div className="bg-white border-b sticky top-0 z-10 shadow-sm no-print">
         <div className="max-w-5xl mx-auto px-4 py-2 flex justify-between items-center">
           <button onClick={() => setStep(0)} className="font-bold text-blue-600">CVistan</button>
           <div className="flex items-center gap-3">
@@ -356,27 +534,29 @@ export function CVBuilder() {
               <React.Fragment key={s.key}>
                 <button 
                   onClick={() => i + 1 <= step && setStep(i + 1)} 
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs flex-shrink-0 transition-all ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 transition-all ${
                     i + 1 === step ? 'bg-blue-600 text-white shadow-lg scale-110' : 
                     i + 1 < step ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400'
                   }`}
+                  title={t(s.key) as string}
                 >
                   {i + 1 < step ? '✓' : s.icon}
                 </button>
                 {i < steps.length - 1 && (
-                  <div className={`w-2 md:w-4 h-1 rounded ${i + 1 < step ? 'bg-green-500' : 'bg-gray-200'}`} />
+                  <div className={`w-2 md:w-3 h-1 rounded ${i + 1 < step ? 'bg-green-500' : 'bg-gray-200'}`} />
                 )}
               </React.Fragment>
             ))}
           </div>
           <p className="text-center text-xs text-gray-500 mt-1">
-            {t('step')} {step} {t('of')} 9 • <b>{t(steps[step - 1]?.key)}</b>
+            {t('step')} {step} {t('of')} 10 • <b>{t(steps[step - 1]?.key)}</b>
           </p>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
+          {/* Form Panel */}
           <div className="flex-1 lg:max-w-md">
             <div className="bg-white rounded-2xl shadow-lg p-5">
               
@@ -498,31 +678,104 @@ export function CVBuilder() {
                 </div>
               )}
 
-              {/* Step 4: Education */}
+              {/* Step 4: Education - With Validation */}
               {step === 4 && (
                 <div className="space-y-3">
                   <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-100">
                     <p className="text-emerald-700 text-sm">{t('noEduH')}</p>
                   </div>
+                  {errors.education && (
+                    <div className="bg-red-50 rounded-xl p-3 border border-red-200">
+                      <p className="text-red-700 text-sm">⚠️ {errors.education}</p>
+                    </div>
+                  )}
                   {cv.education.length === 0 ? (
                     <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                       <span className="text-4xl">🎓</span>
                       <p className="text-gray-500 mt-2 mb-3">{t('noEdu')}</p>
-                      <button onClick={() => upd('education', [...cv.education, { id: Date.now().toString(), degree: '', institution: '', gradMonth: '', gradYear: '', gpa: '', thesisTitle: '' }])} className="px-5 py-2 bg-blue-600 text-white rounded-xl">+ {t('addEdu')}</button>
+                      <button onClick={() => upd('education', [...cv.education, { id: Date.now().toString(), degreeType: '', fieldOfStudy: '', degree: '', institution: '', gradMonth: '', gradYear: '', gpa: '', thesisTitle: '' }])} className="px-5 py-2 bg-blue-600 text-white rounded-xl">+ {t('addEdu')}</button>
                     </div>
                   ) : (
-                    cv.education.map((edu, i) => (
-                      <div key={edu.id} className="bg-gray-50 rounded-xl p-4 space-y-3 border">
-                        <div className="flex justify-between"><span className="font-semibold">🎓 #{i + 1}</span><button onClick={() => upd('education', cv.education.filter((_, j) => j !== i))} className="text-red-500 text-sm">🗑️</button></div>
-                        <div><label className="text-xs text-gray-500">{t('degree')}*</label><input value={edu.degree} onChange={e => { const u = [...cv.education]; u[i].degree = e.target.value; upd('education', u); }} placeholder={t('degreeP')} className="w-full px-2 py-2 border rounded-lg text-sm" /></div>
-                        <div><label className="text-xs text-gray-500">{t('inst')}*</label><input value={edu.institution} onChange={e => { const u = [...cv.education]; u[i].institution = e.target.value; upd('education', u); }} placeholder={t('instP')} className="w-full px-2 py-2 border rounded-lg text-sm" /></div>
-                        <div><label className="text-xs text-gray-500">{t('gradD')}</label><div className="grid grid-cols-2 gap-2"><select value={edu.gradMonth} onChange={e => { const u = [...cv.education]; u[i].gradMonth = e.target.value; upd('education', u); }} className="px-2 py-2 border rounded-lg text-sm"><option value="">{t('month')}</option>{mos.map((m, j) => <option key={j} value={j+1}>{m}</option>)}</select><select value={edu.gradYear} onChange={e => { const u = [...cv.education]; u[i].gradYear = e.target.value; upd('education', u); }} className="px-2 py-2 border rounded-lg text-sm"><option value="">{t('year')}</option>{yrs.map(y => <option key={y} value={y}>{y}</option>)}</select></div></div>
-                        <div><label className="text-xs text-gray-500">{t('gpa')} <span className="text-gray-400">- {t('gpaH')}</span></label><input value={edu.gpa} onChange={e => { const u = [...cv.education]; u[i].gpa = e.target.value; upd('education', u); }} placeholder={t('gpaP')} className="w-full px-2 py-2 border rounded-lg text-sm" /></div>
-                        <div><label className="text-xs text-gray-500">{t('thesis')} <span className="text-gray-400">- {t('thesisH')}</span></label><input value={edu.thesisTitle} onChange={e => { const u = [...cv.education]; u[i].thesisTitle = e.target.value; upd('education', u); }} placeholder={t('thesisP')} className="w-full px-2 py-2 border rounded-lg text-sm" /></div>
-                      </div>
-                    ))
+                    cv.education.map((edu, i) => {
+                      const eduError = validateEducation(edu);
+                      return (
+                        <div key={edu.id} className={`bg-gray-50 rounded-xl p-4 space-y-3 border ${eduError ? 'border-red-300' : ''}`}>
+                          <div className="flex justify-between">
+                            <span className="font-semibold">🎓 #{i + 1}</span>
+                            <button onClick={() => upd('education', cv.education.filter((_, j) => j !== i))} className="text-red-500 text-sm">🗑️</button>
+                          </div>
+                          
+                          {/* Degree Type Dropdown */}
+                          <div>
+                            <label className="text-xs text-gray-500">Degree Type*</label>
+                            <select 
+                              value={edu.degreeType} 
+                              onChange={e => updateEducation(i, 'degreeType', e.target.value)} 
+                              className="w-full px-2 py-2 border rounded-lg text-sm"
+                            >
+                              <option value="">Select degree type...</option>
+                              {DEGREE_TYPES.map(d => <option key={d} value={d}>{d}</option>)}
+                            </select>
+                          </div>
+
+                          {/* Field of Study Dropdown */}
+                          <div>
+                            <label className="text-xs text-gray-500">Field of Study</label>
+                            <select 
+                              value={edu.fieldOfStudy} 
+                              onChange={e => updateEducation(i, 'fieldOfStudy', e.target.value)} 
+                              className="w-full px-2 py-2 border rounded-lg text-sm"
+                            >
+                              <option value="">Select field...</option>
+                              {FIELDS_OF_STUDY.map(f => <option key={f} value={f}>{f}</option>)}
+                            </select>
+                          </div>
+
+                          {/* Generated Degree (Read Only) */}
+                          {edu.degree && (
+                            <div>
+                              <label className="text-xs text-gray-500">Degree (auto-generated)</label>
+                              <input value={edu.degree} disabled className="w-full px-2 py-2 border rounded-lg text-sm bg-gray-100 text-gray-600" />
+                            </div>
+                          )}
+
+                          {eduError && (
+                            <p className="text-red-500 text-xs">⚠️ {eduError}</p>
+                          )}
+
+                          <div>
+                            <label className="text-xs text-gray-500">{t('inst')}*</label>
+                            <input value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} placeholder={t('instP')} className="w-full px-2 py-2 border rounded-lg text-sm" />
+                          </div>
+                          
+                          <div>
+                            <label className="text-xs text-gray-500">{t('gradD')}</label>
+                            <div className="grid grid-cols-2 gap-2">
+                              <select value={edu.gradMonth} onChange={e => updateEducation(i, 'gradMonth', e.target.value)} className="px-2 py-2 border rounded-lg text-sm">
+                                <option value="">{t('month')}</option>
+                                {mos.map((m, j) => <option key={j} value={j+1}>{m}</option>)}
+                              </select>
+                              <select value={edu.gradYear} onChange={e => updateEducation(i, 'gradYear', e.target.value)} className="px-2 py-2 border rounded-lg text-sm">
+                                <option value="">{t('year')}</option>
+                                {yrs.map(y => <option key={y} value={y}>{y}</option>)}
+                              </select>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <label className="text-xs text-gray-500">{t('gpa')} <span className="text-gray-400">- {t('gpaH')}</span></label>
+                            <input value={edu.gpa} onChange={e => updateEducation(i, 'gpa', e.target.value)} placeholder={t('gpaP')} className="w-full px-2 py-2 border rounded-lg text-sm" />
+                          </div>
+                          
+                          <div>
+                            <label className="text-xs text-gray-500">{t('thesis')} <span className="text-gray-400">- {t('thesisH')}</span></label>
+                            <input value={edu.thesisTitle} onChange={e => updateEducation(i, 'thesisTitle', e.target.value)} placeholder={t('thesisP')} className="w-full px-2 py-2 border rounded-lg text-sm" />
+                          </div>
+                        </div>
+                      );
+                    })
                   )}
-                  {cv.education.length > 0 && <button onClick={() => upd('education', [...cv.education, { id: Date.now().toString(), degree: '', institution: '', gradMonth: '', gradYear: '', gpa: '', thesisTitle: '' }])} className="w-full py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:border-blue-400 hover:text-blue-600">+ {t('addEdu')}</button>}
+                  {cv.education.length > 0 && <button onClick={() => upd('education', [...cv.education, { id: Date.now().toString(), degreeType: '', fieldOfStudy: '', degree: '', institution: '', gradMonth: '', gradYear: '', gpa: '', thesisTitle: '' }])} className="w-full py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:border-blue-400 hover:text-blue-600">+ {t('addEdu')}</button>}
                 </div>
               )}
 
@@ -610,8 +863,28 @@ export function CVBuilder() {
                 </div>
               )}
 
-              {/* Step 9: Review */}
+              {/* Step 9: Settings (NEW) */}
               {step === 9 && (
+                <div className="space-y-4">
+                  <p className="text-gray-500 text-sm text-center">Customize your CV layout and appearance</p>
+                  <SettingsPanel 
+                    settings={cv.settings || defaultSettings} 
+                    onChange={updSettings} 
+                    t={t} 
+                  />
+                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                    <h4 className="font-medium text-blue-700 text-sm mb-2">💡 Tips</h4>
+                    <ul className="text-xs text-blue-600 space-y-1">
+                      <li>• <b>Compact</b> - Best for CVs with lots of experience</li>
+                      <li>• <b>Normal</b> - Balanced, works for most cases</li>
+                      <li>• <b>Spacious</b> - Best for short CVs (1-2 jobs)</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 10: Review */}
+              {step === 10 && (
                 <div className="space-y-5">
                   {saved ? (
                     <div className="text-center py-8">
@@ -660,8 +933,8 @@ export function CVBuilder() {
             </div>
 
             {/* Navigation */}
-            {step < 9 && (
-              <div className="flex justify-between mt-4">
+            {step < 10 && (
+              <div className="flex justify-between mt-4 no-print">
                 <button onClick={() => setStep(step - 1)} className="px-5 py-2 text-gray-600 hover:bg-gray-100 rounded-xl">{rtl ? '→' : '←'} {t('back')}</button>
                 <button onClick={handleNext} className="px-6 py-2 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700">{t('next')} {rtl ? '←' : '→'}</button>
               </div>
@@ -669,14 +942,17 @@ export function CVBuilder() {
           </div>
 
           {/* Preview Panel */}
-          {step < 9 && (
-            <div className="flex-1 hidden lg:block">
+          {step < 10 && (
+            <div className="flex-1 hidden lg:block no-print">
               <div className="sticky top-32">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-gray-700">{t('preview')}</h3>
-                  <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">{t(template)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">{t(template)}</span>
+                    <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded capitalize">{cv.settings?.density || 'normal'}</span>
+                  </div>
                 </div>
-                <div ref={cvRef} className="bg-white rounded-xl shadow-xl overflow-hidden border" style={{ minHeight: '500px' }}>
+                <div className="bg-white rounded-xl shadow-xl overflow-hidden border" style={{ minHeight: '500px' }}>
                   <div className="transform scale-[0.45] origin-top-left" style={{ width: '222%' }}>
                     <Comp data={cv} rtl={rtl} t={t} />
                   </div>
@@ -685,16 +961,21 @@ export function CVBuilder() {
             </div>
           )}
 
-          {step === 9 && (
+          {/* Full CV Preview for Export */}
+          {step === 10 && (
             <div className="flex-1">
-              <div ref={cvRef} className="bg-white rounded-xl shadow-xl overflow-hidden border">
-                <Comp data={cv} rtl={rtl} t={t} />
+              <div 
+                ref={cvRef} 
+                className={`bg-white rounded-xl shadow-xl overflow-hidden border ${exportMode ? 'export-mode' : ''}`}
+              >
+                <Comp data={cv} rtl={rtl} t={t} exportMode={exportMode} />
               </div>
             </div>
           )}
         </div>
       </div>
 
+      {/* Modals */}
       {preview && <PreviewModal tpl={preview} rtl={rtl} t={t} onClose={() => setPreview(null)} onSelect={setTemplate} sample={sample} />}
       {authModal && <AuthModal mode={authModal} t={t} rtl={rtl} onClose={() => setAuthModal(null)} onSubmit={handleAuth} onSwitch={() => setAuthModal(authModal === 'signin' ? 'signup' : 'signin')} loading={authLoading} />}
     </div>
