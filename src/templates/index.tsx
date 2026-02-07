@@ -1,10 +1,8 @@
 // src/templates/index.tsx
 // SINGLE PRODUCTION-READY CV TEMPLATE
-// - Pixel-perfect alignment
+// - Print/Export optimized (PDF-safe fonts + icons)
 // - Predictable pagination
-// - Works for any CV length
 // - RTL support
-// - Print/Export optimized
 
 'use client';
 
@@ -98,10 +96,7 @@ const prepareExperience = (
   }));
 };
 
-const prepareEducation = (
-  education: CVData['education'],
-  months: string[]
-): PreparedEducation[] => {
+const prepareEducation = (education: CVData['education'], months: string[]): PreparedEducation[] => {
   return sortByYear(education, 'gradYear').map(edu => ({
     id: edu.id,
     degree: edu.degree || '',
@@ -163,21 +158,6 @@ const SidebarTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   >
     {children}
   </h3>
-);
-
-// Contact Item
-const ContactItem: React.FC<{
-  icon: string;
-  children: React.ReactNode;
-  rtl?: boolean;
-}> = ({ icon, children, rtl }) => (
-  <div
-    className={`flex items-center gap-2 ${rtl ? 'flex-row-reverse' : ''}`}
-    style={{ fontSize: TOKENS.fonts.small, marginBottom: 6 }}
-  >
-    <span style={{ width: 16, textAlign: 'center' }}>{icon}</span>
-    <span style={{ color: TOKENS.colors.textSecondary }}>{children}</span>
-  </div>
 );
 
 // Skill Item
@@ -249,7 +229,6 @@ const ExperienceItem: React.FC<{
 
   return (
     <div className="cv-item" style={{ marginBottom: spacing.itemGap }}>
-      {/* Header Row: Title + Company | Date */}
       <div className={`flex justify-between items-start ${rtl ? 'flex-row-reverse' : ''}`}>
         <div style={{ flex: 1, minWidth: 0, paddingRight: rtl ? 0 : 12, paddingLeft: rtl ? 12 : 0 }}>
           <h3
@@ -272,6 +251,7 @@ const ExperienceItem: React.FC<{
             {data.company}
           </p>
         </div>
+
         <span
           style={{
             fontSize: TOKENS.fonts.tiny,
@@ -286,7 +266,6 @@ const ExperienceItem: React.FC<{
         </span>
       </div>
 
-      {/* Bullets */}
       {data.bullets.length > 0 && (
         <ul
           style={{
@@ -357,11 +336,13 @@ const EducationItem: React.FC<{
           >
             {data.institution}
           </p>
+
           {data.gpa && (
             <p style={{ fontSize: TOKENS.fonts.tiny, color: TOKENS.colors.textMuted, marginTop: 2 }}>
               GPA: {data.gpa}
             </p>
           )}
+
           {data.thesis && (
             <p
               style={{
@@ -375,6 +356,7 @@ const EducationItem: React.FC<{
             </p>
           )}
         </div>
+
         <span
           style={{
             fontSize: TOKENS.fonts.tiny,
@@ -423,19 +405,20 @@ const CertificationItem: React.FC<{
           >
             {data.issuer}
           </p>
+
           {data.credentialId && (
             <p style={{ fontSize: TOKENS.fonts.tiny, color: TOKENS.colors.textMuted, marginTop: 2 }}>
               ID: {data.credentialId}
             </p>
           )}
         </div>
+
         <div
           className={`flex items-center gap-2 flex-shrink-0 ${rtl ? 'flex-row-reverse' : ''}`}
           style={{ width: TOKENS.grid.dateColumnWidth, justifyContent: rtl ? 'flex-start' : 'flex-end' }}
         >
-          <span style={{ fontSize: TOKENS.fonts.tiny, color: TOKENS.colors.textMuted }}>
-            {data.issueDate}
-          </span>
+          <span style={{ fontSize: TOKENS.fonts.tiny, color: TOKENS.colors.textMuted }}>{data.issueDate}</span>
+
           {data.mode && (
             <span
               style={{
@@ -446,7 +429,7 @@ const CertificationItem: React.FC<{
                 color: data.mode === 'online' ? '#1d4ed8' : '#15803d',
               }}
             >
-              {data.mode === 'online' ? '🌐' : '🏢'}
+              {data.mode === 'online' ? 'Online' : 'Onsite'}
             </span>
           )}
         </div>
@@ -465,12 +448,10 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
   const density: Density = data.settings?.density || 'normal';
   const spacing = DENSITY[density];
 
-  // Prepare data
   const experience = prepareExperience(data.experience, months, presentText);
   const education = prepareEducation(data.education, months);
   const certifications = prepareCertifications(data.certifications, months);
 
-  // Check what content exists
   const hasContact = data.personal.email || data.personal.phone || data.personal.location;
   const hasSummary = data.summary && data.summary.trim().length > 0;
   const hasExperience = experience.length > 0;
@@ -481,24 +462,22 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
 
   return (
     <>
-      {/* Print Styles */}
       {exportMode && <style>{PRINT_STYLES}</style>}
 
       <div
         className="cv-page"
+        dir={rtl ? 'rtl' : 'ltr'}
         style={{
-          fontFamily: "'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+          // IMPORTANT: use embedded Inter in PRINT_STYLES for PDF stability
+          fontFamily: 'Inter, Arial, sans-serif',
           fontSize: TOKENS.fonts.body,
           lineHeight: spacing.lineHeight,
           backgroundColor: TOKENS.colors.white,
           color: TOKENS.colors.textPrimary,
           minHeight: '100%',
-          direction: rtl ? 'rtl' : 'ltr',
         }}
       >
-        {/* ============================================================= */}
-        {/* HEADER - Name, Title, Contact */}
-        {/* ============================================================= */}
+        {/* HEADER */}
         <header
           style={{
             backgroundColor: TOKENS.colors.headerBg,
@@ -507,7 +486,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
           }}
         >
           <div className={`flex items-center gap-5 ${rtl ? 'flex-row-reverse' : ''}`}>
-            {/* Photo */}
             {data.personal.photo && (
               <img
                 src={data.personal.photo}
@@ -523,7 +501,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               />
             )}
 
-            {/* Name & Title */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <h1
                 style={{
@@ -536,6 +513,7 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               >
                 {data.personal.fullName || 'Your Name'}
               </h1>
+
               {data.personal.jobTitle && (
                 <p
                   style={{
@@ -550,7 +528,7 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               )}
             </div>
 
-            {/* Contact Info (in header) */}
+            {/* Contact (PDF-safe: no emojis) */}
             {hasContact && (
               <div
                 style={{
@@ -559,28 +537,22 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
                   fontSize: TOKENS.fonts.small,
                 }}
               >
-                {data.personal.phone && (
-                  <div style={{ marginBottom: 4 }}>📱 {data.personal.phone}</div>
-                )}
-                {data.personal.email && (
-                  <div style={{ marginBottom: 4 }}>✉️ {data.personal.email}</div>
-                )}
-                {data.personal.location && (
-                  <div>📍 {data.personal.location}</div>
-                )}
+                {data.personal.phone && <div style={{ marginBottom: 4 }}>Phone: {data.personal.phone}</div>}
+                {data.personal.email && <div style={{ marginBottom: 4 }}>Email: {data.personal.email}</div>}
+                {data.personal.location && <div>Location: {data.personal.location}</div>}
               </div>
             )}
           </div>
         </header>
 
-        {/* ============================================================= */}
-        {/* BODY - Two Column Layout */}
-        {/* ============================================================= */}
-        <div className={`flex ${rtl ? 'flex-row-reverse' : ''}`} style={{ minHeight: 'calc(100% - 120px)' }}>
-          {/* ------------------------------------------------------------- */}
+        {/* BODY */}
+        <div
+          className={`cv-columns flex ${rtl ? 'flex-row-reverse' : ''}`}
+          style={{ minHeight: 'calc(100% - 120px)' }}
+        >
           {/* SIDEBAR */}
-          {/* ------------------------------------------------------------- */}
           <aside
+            className="cv-sidebar"
             style={{
               width: TOKENS.grid.sidebarWidth,
               backgroundColor: TOKENS.colors.sidebarBg,
@@ -589,7 +561,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               borderLeft: rtl ? `1px solid ${TOKENS.colors.border}` : 'none',
             }}
           >
-            {/* Skills */}
             {hasSkills && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SidebarTitle>Skills</SidebarTitle>
@@ -601,7 +572,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               </div>
             )}
 
-            {/* Languages */}
             {hasLanguages && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SidebarTitle>Languages</SidebarTitle>
@@ -611,7 +581,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               </div>
             )}
 
-            {/* Education (Sidebar version for short CVs) */}
             {hasEducation && !hasExperience && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SidebarTitle>Education</SidebarTitle>
@@ -649,7 +618,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               </div>
             )}
 
-            {/* Reference Note */}
             <div style={{ marginTop: 'auto' }}>
               <SidebarTitle>References</SidebarTitle>
               <p
@@ -664,11 +632,8 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
             </div>
           </aside>
 
-          {/* ------------------------------------------------------------- */}
-          {/* MAIN CONTENT */}
-          {/* ------------------------------------------------------------- */}
-          <main style={{ flex: 1, padding: spacing.mainPadding }}>
-            {/* Summary */}
+          {/* MAIN */}
+          <main className="cv-main" style={{ flex: 1, padding: spacing.mainPadding }}>
             {hasSummary && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SectionTitle>Professional Summary</SectionTitle>
@@ -685,7 +650,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               </div>
             )}
 
-            {/* Experience */}
             {hasExperience && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SectionTitle>Work Experience</SectionTitle>
@@ -695,7 +659,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               </div>
             )}
 
-            {/* Education (Main area for CVs with experience) */}
             {hasEducation && hasExperience && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SectionTitle>Education</SectionTitle>
@@ -705,7 +668,6 @@ export function ProfessionalTemplate({ data, rtl, t, exportMode = false }: Templ
               </div>
             )}
 
-            {/* Certifications */}
             {hasCertifications && (
               <div className="cv-section" style={{ marginBottom: spacing.sectionGap }}>
                 <SectionTitle>Certifications</SectionTitle>
@@ -735,5 +697,4 @@ export const TEMPLATES = {
 
 export type TemplateKey = keyof typeof TEMPLATES;
 
-// Default export for backward compatibility
 export default ProfessionalTemplate;
