@@ -202,84 +202,97 @@ export async function generateWord(
         <meta charset="utf-8">
         <title>CV - ${cv.personal.fullName}</title>
         <style>
-          @page { margin: 20mm; }
-          body { 
-            font-family: Calibri, Arial, sans-serif; 
-            font-size: ${TOKENS.fonts.body}pt; 
-            line-height: ${TOKENS.lineHeight.normal}; 
-            color: ${TOKENS.colors.textPrimary}; 
-          }
-          h1 { 
-            font-size: ${TOKENS.fonts.name}pt; 
-            color: ${TOKENS.colors.primary}; 
-            margin-bottom: 4pt; 
-            text-align: center; 
-          }
-          h2 { 
-            font-size: ${TOKENS.fonts.sectionTitle}pt; 
-            color: ${TOKENS.colors.text}; 
-            border-bottom: 2px solid ${TOKENS.colors.accent}; 
-            padding-bottom: 4pt; 
-            margin-top: 16pt; 
-            margin-bottom: 8pt; 
-          }
-          .subtitle { 
-            font-size: ${TOKENS.fonts.jobTitle}pt; 
-            color: ${TOKENS.colors.secondary}; 
-            text-align: center; 
-            margin-bottom: 8pt; 
-          }
-          .contact { 
-            color: ${TOKENS.colors.textLight}; 
-            font-size: ${TOKENS.fonts.small}pt; 
-            text-align: center; 
-            margin-bottom: 16pt; 
-          }
-          .summary { 
-            background-color: ${TOKENS.colors.background}; 
-            padding: 8pt; 
-            margin-bottom: 12pt; 
-            border-left: 3pt solid ${TOKENS.colors.accent}; 
-          }
-          .entry { margin-bottom: 12pt; }
-          .job-title { 
-            font-weight: bold; 
-            font-size: ${TOKENS.fonts.body}pt; 
-            color: ${TOKENS.colors.text}; 
-          }
-          .company { 
-            color: ${TOKENS.colors.accent}; 
-            font-size: ${TOKENS.fonts.small}pt; 
-          }
-          .date { 
-            color: ${TOKENS.colors.textLight}; 
-            font-size: ${TOKENS.fonts.tiny}pt; 
-            font-style: italic; 
-          }
-          .description { 
-            color: ${TOKENS.colors.secondary}; 
-            font-size: ${TOKENS.fonts.small}pt; 
-            margin-top: 4pt; 
-            white-space: pre-line; 
-          }
-          .skill-tag { 
-            display: inline-block; 
-            background-color: ${TOKENS.colors.background}; 
-            padding: 2pt 6pt; 
-            margin: 2pt; 
-            border-radius: 2pt; 
-            font-size: ${TOKENS.fonts.small}pt; 
-          }
-          .cert-mode { 
-            display: inline-block; 
-            background-color: #e6fffa; 
-            color: #319795; 
-            padding: 1pt 4pt; 
-            border-radius: 2pt; 
-            font-size: ${TOKENS.fonts.tiny}pt; 
-            margin-left: 4pt; 
-          }
-        </style>
+  @page { margin: 20mm; }
+
+  body { 
+    font-family: Calibri, Arial, sans-serif; 
+    font-size: ${TOKENS.fonts.body}pt; 
+    line-height: ${TOKENS.lineHeight.normal}; 
+    color: ${TOKENS.colors.textPrimary}; 
+  }
+
+  h1 { 
+    font-size: ${TOKENS.fonts.name}pt; 
+    color: ${TOKENS.colors.textPrimary}; 
+    margin-bottom: 4pt; 
+    text-align: center; 
+  }
+
+  h2 { 
+    font-size: ${TOKENS.fonts.sectionTitle}pt; 
+    color: ${TOKENS.colors.textPrimary}; 
+    border-bottom: 2px solid ${TOKENS.colors.accent}; 
+    padding-bottom: 4pt; 
+    margin-top: 16pt; 
+    margin-bottom: 8pt; 
+  }
+
+  .subtitle { 
+    font-size: ${TOKENS.fonts.jobTitle}pt; 
+    color: ${TOKENS.colors.textSecondary}; 
+    text-align: center; 
+    margin-bottom: 8pt; 
+  }
+
+  .contact { 
+    color: ${TOKENS.colors.textMuted}; 
+    font-size: ${TOKENS.fonts.small}pt; 
+    text-align: center; 
+    margin-bottom: 16pt; 
+  }
+
+  .summary { 
+    background-color: ${TOKENS.colors.sidebarBg}; 
+    padding: 8pt; 
+    margin-bottom: 12pt; 
+    border-left: 3pt solid ${TOKENS.colors.accent}; 
+  }
+
+  .entry { margin-bottom: 12pt; }
+
+  .job-title { 
+    font-weight: bold; 
+    font-size: ${TOKENS.fonts.body}pt; 
+    color: ${TOKENS.colors.textPrimary}; 
+  }
+
+  .company { 
+    color: ${TOKENS.colors.accent}; 
+    font-size: ${TOKENS.fonts.small}pt; 
+  }
+
+  .date { 
+    color: ${TOKENS.colors.textMuted}; 
+    font-size: ${TOKENS.fonts.tiny}pt; 
+    font-style: italic; 
+  }
+
+  .description { 
+    color: ${TOKENS.colors.textSecondary}; 
+    font-size: ${TOKENS.fonts.small}pt; 
+    margin-top: 4pt; 
+    white-space: pre-line; 
+  }
+
+  .skill-tag { 
+    display: inline-block; 
+    background-color: ${TOKENS.colors.sidebarBg}; 
+    padding: 2pt 6pt; 
+    margin: 2pt; 
+    border-radius: 2pt; 
+    font-size: ${TOKENS.fonts.small}pt; 
+  }
+
+  .cert-mode { 
+    display: inline-block; 
+    background-color: #e6fffa; 
+    color: #319795; 
+    padding: 1pt 4pt; 
+    border-radius: 2pt; 
+    font-size: ${TOKENS.fonts.tiny}pt; 
+    margin-left: 4pt; 
+  }
+</style>
       </head>
       <body>
         <h1>${cv.personal.fullName || 'Your Name'}</h1>
