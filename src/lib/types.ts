@@ -1,4 +1,5 @@
 // src/lib/types.ts
+
 export interface SocialLinks {
   linkedin: string;
   github: string;
@@ -31,9 +32,12 @@ export interface Experience {
   description: string;
 }
 
+// Updated Education with separate degree type and field
 export interface Education {
   id: string;
-  degree: string;
+  degreeType: string; // e.g., "Bachelor's Degree"
+  fieldOfStudy: string; // e.g., "Computer Science"
+  degree: string; // Full display string (auto-generated or custom)
   institution: string;
   gradMonth: string;
   gradYear: string;
@@ -60,6 +64,12 @@ export interface Language {
   level: string;
 }
 
+// CV Display Settings
+export interface CVSettings {
+  density: 'compact' | 'normal' | 'spacious';
+  fontSize: 'small' | 'medium' | 'large';
+}
+
 export interface CVData {
   personal: PersonalInfo;
   summary: string;
@@ -68,6 +78,7 @@ export interface CVData {
   certifications: Certification[];
   skills: string[];
   languages: Language[];
+  settings?: CVSettings;
 }
 
 export interface ValidationErrors {
@@ -75,6 +86,7 @@ export interface ValidationErrors {
   jobTitle?: string;
   phone?: string;
   sections?: string;
+  education?: string;
   [key: string]: string | undefined;
 }
 
@@ -83,11 +95,7 @@ export interface ValidationResult {
   errors: ValidationErrors;
 }
 
-export type TemplateId = 
-  | 'morgan' 
-  | 'catrine' 
-  | 'sarah' 
-  | 'olivia';
+export type TemplateId = 'morgan' | 'catrine' | 'sarah' | 'olivia';
 
 export type LanguageCode = 'en' | 'ar' | 'ku';
 
@@ -124,3 +132,39 @@ export interface SaveCVResponse {
   cvId?: string;
   error?: string;
 }
+
+// Education validation helper
+export const validateEducation = (edu: Education): string | null => {
+  const degreeType = edu.degreeType?.toLowerCase() || '';
+  const field = edu.fieldOfStudy?.toLowerCase() || '';
+  
+  // Check for invalid combinations
+  if (degreeType.includes('bachelor') && field.includes('mba')) {
+    return 'MBA is a Master\'s degree, not a Bachelor\'s. Please select "Master\'s Degree" for MBA.';
+  }
+  
+  if (degreeType.includes('bachelor') && field.includes('phd')) {
+    return 'PhD is a Doctoral degree, not a Bachelor\'s.';
+  }
+  
+  if (degreeType.includes('high school') && field && field !== 'general' && field !== 'other') {
+    return 'High School Diploma typically doesn\'t have a specific field of study.';
+  }
+  
+  return null;
+};
+
+// Generate full degree string
+export const generateDegreeString = (degreeType: string, fieldOfStudy: string): string => {
+  if (!degreeType && !fieldOfStudy) return '';
+  if (!fieldOfStudy || fieldOfStudy.toLowerCase() === 'other') return degreeType;
+  if (!degreeType) return fieldOfStudy;
+  
+  // Handle special cases
+  if (degreeType.toLowerCase().includes('high school')) return degreeType;
+  if (fieldOfStudy.toLowerCase() === 'mba' || fieldOfStudy.toLowerCase() === 'business administration') {
+    if (degreeType.toLowerCase().includes('master')) return 'MBA';
+  }
+  
+  return `${degreeType} in ${fieldOfStudy}`;
+};
