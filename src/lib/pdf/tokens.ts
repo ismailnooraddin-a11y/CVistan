@@ -12,17 +12,17 @@ export const TOKENS = {
   page: {
     width: 210,
     height: 297,
-    margin: 0, // We handle margins in the template
+    margin: 0,
   },
 
-  // Fixed Typography Scale (in pixels, converted to pt for PDF)
+  // Typography Scale
   fonts: {
-    name: 28,        // Main name
-    jobTitle: 14,    // Job title under name
-    sectionTitle: 11, // Section headers
-    body: 10,        // Main content
-    small: 9,        // Secondary info
-    tiny: 8,         // Dates, metadata
+    name: 28,
+    jobTitle: 14,
+    sectionTitle: 11,
+    body: 10,
+    small: 9,
+    tiny: 8,
   },
 
   // Line Heights
@@ -32,37 +32,32 @@ export const TOKENS = {
     relaxed: 1.6,
   },
 
-  // Color Palette (Professional, ATS-friendly)
+  // Colors
   colors: {
-    // Primary
-    headerBg: '#1a202c',      // Dark header background
-    headerText: '#ffffff',    // White text on header
-    accent: '#3182ce',        // Blue accent for highlights
-    
-    // Text
-    textPrimary: '#1a202c',   // Main text (almost black)
-    textSecondary: '#4a5568', // Secondary text (dark gray)
-    textMuted: '#718096',     // Muted text (medium gray)
-    textLight: '#a0aec0',     // Light text (light gray)
-    
-    // Backgrounds
-    sidebarBg: '#f8fafc',     // Light gray sidebar
+    headerBg: '#1a202c',
+    headerText: '#ffffff',
+    accent: '#3182ce',
+
+    textPrimary: '#1a202c',
+    textSecondary: '#4a5568',
+    textMuted: '#718096',
+    textLight: '#a0aec0',
+
+    sidebarBg: '#f8fafc',
     white: '#ffffff',
-    
-    // Borders
-    border: '#e2e8f0',        // Light border
-    divider: '#cbd5e1',       // Section dividers
+
+    border: '#e2e8f0',
+    divider: '#cbd5e1',
   },
 
-  // Layout Grid
+  // Layout
   grid: {
-    sidebarWidth: '32%',      // Sidebar takes 32% of width
-    mainWidth: '68%',         // Main content takes 68%
-    dateColumnWidth: 110,     // Fixed width for date column (px)
-    gutter: 16,               // Gap between columns
+    sidebarWidth: '32%',
+    mainWidth: '68%',
+    dateColumnWidth: 110,
+    gutter: 16,
   },
 
-  // Spacing Scale (consistent increments)
   spacing: {
     xs: 4,
     sm: 8,
@@ -72,17 +67,15 @@ export const TOKENS = {
     xxl: 32,
   },
 
-  // Border & Divider
   divider: {
-    weight: 1,        // 1px divider lines (subtle)
+    weight: 1,
     style: 'solid',
   },
 
-  // Bullet Styling
   bullet: {
     char: '•',
-    indent: 14,       // Left indent for bullets
-    gap: 6,           // Space after bullet char
+    indent: 14,
+    gap: 6,
   },
 };
 
@@ -90,15 +83,18 @@ export const TOKENS = {
 // DENSITY PRESETS - Only affects spacing, NOT font sizes
 // =============================================================================
 
-export const DENSITY: Record<Density, {
-  sectionGap: number;      // Space between sections
-  itemGap: number;         // Space between items (jobs, education entries)
-  bulletGap: number;       // Space between bullet points
-  headerPadding: number;   // Header internal padding
-  sidebarPadding: number;  // Sidebar internal padding
-  mainPadding: number;     // Main content internal padding
-  lineHeight: number;      // Line height multiplier
-}> = {
+export const DENSITY: Record<
+  Density,
+  {
+    sectionGap: number;
+    itemGap: number;
+    bulletGap: number;
+    headerPadding: number;
+    sidebarPadding: number;
+    mainPadding: number;
+    lineHeight: number;
+  }
+> = {
   compact: {
     sectionGap: 14,
     itemGap: 10,
@@ -129,53 +125,96 @@ export const DENSITY: Record<Density, {
 };
 
 // =============================================================================
-// PRINT/EXPORT CSS - Hides ALL editor UI elements
+// PRINT/EXPORT CSS - PDF SAFE
 // =============================================================================
 
 export const PRINT_STYLES = `
   @media print {
-    /* Hide all non-CV elements */
-    body > *:not(.cv-page) { display: none !important; }
-    .no-print, 
-    .editor-ui, 
-    .toolbar, 
-    .navigation,
-    .step-indicator,
-    button:not(.cv-content *) { 
-      display: none !important; 
+
+    /* --- Embed PDF-safe font (ship this in /public/fonts) --- */
+    @font-face {
+      font-family: "Inter";
+      src: url("/fonts/Inter-Regular.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("/fonts/Inter-SemiBold.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("/fonts/Inter-Bold.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
     }
 
-    /* Page setup */
-    @page {
-      size: A4 portrait;
-      margin: 0;
-    }
+    /* --- Robust isolation (Next.js safe) --- */
+    body * { visibility: hidden !important; }
+    .cv-page, .cv-page * { visibility: visible !important; }
+    .cv-page { position: absolute; left: 0; top: 0; }
 
-    /* Prevent bad breaks */
-    .cv-section { 
-      break-inside: avoid; 
-      page-break-inside: avoid; 
-    }
-    .cv-item { 
-      break-inside: avoid; 
-      page-break-inside: avoid; 
-    }
-    .cv-section-title { 
-      break-after: avoid; 
-      page-break-after: avoid; 
-    }
+    /* --- Page setup --- */
+    @page { size: A4 portrait; margin: 0; }
+    html, body { margin: 0 !important; padding: 0 !important; }
 
-    /* Ensure colors print */
-    * {
+    /* --- A4 sizing --- */
+    .cv-page {
+      width: 210mm !important;
+      min-height: 297mm !important;
+      box-sizing: border-box !important;
+      font-family: "Inter", Arial, sans-serif !important;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
       color-adjust: exact !important;
-    }
-
-    /* Remove shadows/borders for clean print */
-    .cv-page {
       box-shadow: none !important;
       border: none !important;
+    }
+
+    /* --- Repeat sidebar background on every page --- */
+    .cv-page {
+      background: linear-gradient(
+        to right,
+        ${TOKENS.colors.sidebarBg} 0%,
+        ${TOKENS.colors.sidebarBg} 32%,
+        ${TOKENS.colors.white} 32%,
+        ${TOKENS.colors.white} 100%
+      ) !important;
+    }
+
+    /* RTL sidebar on right */
+    .cv-page[dir="rtl"] {
+      background: linear-gradient(
+        to left,
+        ${TOKENS.colors.sidebarBg} 0%,
+        ${TOKENS.colors.sidebarBg} 32%,
+        ${TOKENS.colors.white} 32%,
+        ${TOKENS.colors.white} 100%
+      ) !important;
+    }
+
+    /* Sidebar becomes transparent (gradient is source of truth) */
+    .cv-sidebar { background: transparent !important; }
+
+    /* --- Pagination rules --- */
+    .cv-section {
+      break-inside: auto !important;
+      page-break-inside: auto !important;
+    }
+    .cv-item {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    .cv-section-title {
+      break-after: avoid !important;
+      page-break-after: avoid !important;
+    }
+
+    /* Hide UI */
+    .no-print, .editor-ui, .toolbar, .navigation, .step-indicator {
+      display: none !important;
     }
   }
 `;
@@ -210,5 +249,5 @@ export const FIELDS_OF_STUDY = [
   'Other',
 ] as const;
 
-export type DegreeType = typeof DEGREE_TYPES[number];
-export type FieldOfStudy = typeof FIELDS_OF_STUDY[number];
+export type DegreeType = (typeof DEGREE_TYPES)[number];
+export type FieldOfStudy = (typeof FIELDS_OF_STUDY)[number];
